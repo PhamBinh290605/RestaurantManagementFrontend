@@ -1,0 +1,32 @@
+import { useLocation } from "react-router-dom";
+import { ROUTERS } from "../utils/router";
+import { useAuth } from "./authContext";
+
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  const staffAllowedPaths = [
+    ROUTERS.ADMIN.ORDER,
+    ROUTERS.ADMIN.INVENTORY,
+    ROUTERS.ADMIN.STAFF,
+    ROUTERS.ADMIN.SETTING,
+  ];
+  if (user.isAdmin) {
+    return children;
+  } else if (user.isStaff) {
+    const currentPath = location.pathname;
+    if (!staffAllowedPaths.includes(currentPath)) {
+      return (
+        <div>Access Denied. You do not have permission to view this page.</div>
+      );
+    }
+    return children;
+  } else {
+    return (
+      <div>Access Denied. You do not have permission to view this page.</div>
+    );
+  }
+};
+
+export default ProtectedRoute;
