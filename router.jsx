@@ -4,8 +4,10 @@ import LoginPage from "./src/pages/auth/pages/LoginPage";
 import RegisterPage from "./src/pages/auth/pages/Register";
 import UserLayout from "./src/pages/user/theme/userLayout";
 import AdminLayout from "./src/pages/admin/theme/adminLayout";
-import { AuthProvider } from "./src/context/authContext";
-import ProtectedRoute from "./src/context/protectedRoute";
+import { AuthProvider } from "./src/components/context/authContext";
+import ProtectedRoute from "./src/components/context/protectedRoute";
+import NotFound from "./src/components/notFound";
+import StaffPage from "./src/pages/admin/staff";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -51,7 +53,7 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.STAFF,
-      element: <div>Staff</div>,
+      element: <StaffPage />,
     },
     {
       path: ROUTERS.ADMIN.REPORT,
@@ -86,6 +88,10 @@ const RouterCustom = () => {
             <Route key={index} path={item.path} element={item.element} />
           ))}
         </Route>
+        <Route
+          path={ROUTERS.NOT_FOUND}
+          element={<NotFound url="/" title="GO BACK HOME" />}
+        />
       </Routes>
     </AuthProvider>
   );

@@ -1,6 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { jwtDecode } from "jwt-decode";
 import { createContext, useContext, useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { ROUTERS } from "../../utils/router";
 
 const AuthContext = createContext();
 
@@ -17,6 +19,14 @@ export const AuthProvider = ({ children }) => {
     if (savedToken) {
       try {
         const decodedToken = jwtDecode(savedToken);
+
+        const exp = decodedToken.exp;
+
+        if (exp && Date.now() >= exp * 1000) {
+          console.log("Token has expired");
+          localStorage.removeItem("token");
+          Navigate(ROUTERS.AUTH.LOGIN);
+        }
         const role = decodedToken.Role || decodedToken.role;
 
         let isAdmin = false;
@@ -59,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 
       // Decode token to get user roles
       const decodedToken = jwtDecode(token);
-      console.log("Decoded Token:", decodedToken);
+      // console.log("Decoded Token:", decodedToken);
 
       setUser({
         username: decodedToken.Username || "",

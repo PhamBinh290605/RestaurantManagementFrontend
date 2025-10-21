@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
-import { ROUTERS } from "../utils/router";
+import { ROUTERS } from "../../utils/router";
 import { useAuth } from "./authContext";
+import NotFound from "../notFound";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
@@ -17,15 +18,11 @@ const ProtectedRoute = ({ children }) => {
   } else if (user.isStaff) {
     const currentPath = location.pathname;
     if (!staffAllowedPaths.includes(currentPath)) {
-      return (
-        <div>Access Denied. You do not have permission to view this page.</div>
-      );
+      return <NotFound url={ROUTERS.AUTH.LOGIN} title="COME BACK" />;
     }
     return children;
   } else {
-    return (
-      <div>Access Denied. You do not have permission to view this page.</div>
-    );
+    return <NotFound url={ROUTERS.AUTH.LOGIN} title="COME BACK" />;
   }
 };
 

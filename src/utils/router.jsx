@@ -19,4 +19,5 @@ export const ROUTERS = {
     REPORT: "/admin/report",
     SETTING: "/admin/setting",
   },
+  NOT_FOUND: "*",
 };

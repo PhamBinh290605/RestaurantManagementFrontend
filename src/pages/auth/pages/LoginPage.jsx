@@ -4,7 +4,7 @@ import { ROUTERS } from "../../../utils/router";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GoogleLogin } from "@react-oauth/google";
-import { useAuth } from "../../../context/authContext";
+import { useAuth } from "../../../components/context/authContext";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -13,6 +13,8 @@ const LoginPage = () => {
     username: "",
     password: "",
   });
+
+  const { user } = useAuth();
 
   const { login, loginGoogle } = useAuth();
 
@@ -27,7 +29,11 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       await login(formData);
-      navigate(ROUTERS.ADMIN.DASHBOARD);
+      if (user.isAdmin) {
+        navigate(ROUTERS.ADMIN.DASHBOARD);
+      } else if (user.isStaff) {
+        navigate(ROUTERS.ADMIN.STAFF);
+      }
     } catch (error) {
       console.error("Login error:", error);
       alert("Login failed. Please check your credentials and try again.");

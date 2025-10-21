@@ -10,7 +10,7 @@ import {
   Settings,
 } from "lucide-react";
 import { ROUTERS } from "../../../../utils/router";
-import { useAuth } from "../../../../context/authContext";
+import { useAuth } from "../../../../components/context/authContext";
 
 const Sidebar = ({ collapsed }) => {
   const navigate = useNavigate();

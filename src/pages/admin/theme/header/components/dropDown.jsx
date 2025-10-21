@@ -26,7 +26,7 @@ const DropDown = (props) => {
     >
       <button className="flex items-center gap-2 text-gray-700 font-medium">
         <div className="w-10 h-10 rounded-full bg-[#4A7B7A] flex items-center justify-center text-white font-bold">
-          AD
+          <img src="/src/assets/images/icon-avatar.png" alt="" />
         </div>
         <span>{user.username}</span>
       </button>

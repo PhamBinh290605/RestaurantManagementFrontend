@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import DropDown from "./components/dropDown";
-import { useAuth } from "../../../../context/authContext";
+import { useAuth } from "../../../../components/context/authContext";
 
 const AdminHeader = (props) => {
   const { onToggleSidebar, onToggleTheme, theme } = props;
