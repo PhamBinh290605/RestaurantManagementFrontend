@@ -8,6 +8,7 @@ import {
   Users,
   BarChart3,
   Settings,
+  Archive,
 } from "lucide-react";
 import { ROUTERS } from "../../../../utils/router";
 import { useAuth } from "../../../../components/context/authContext";
@@ -60,6 +61,11 @@ const Sidebar = ({ collapsed }) => {
             path: ROUTERS.ADMIN.SETTING,
             icon: <Settings size={20} />,
           },
+          {
+            name: "Category Management",
+            path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
+            icon: <Archive size={20} />,
+          },
         ]
       : user.isStaff
       ? [
@@ -105,8 +111,8 @@ const Sidebar = ({ collapsed }) => {
               key={index}
               onClick={() => {
                 navigate(item.path);
-                console.log("navigating to", item.path);
-                console.log("current path", location.pathname);
+                // console.log("navigating to", item.path);
+                // console.log("current path", location.pathname);
               }}
               className={`flex items-center gap-3 px-8 py-3 cursor-pointer font-medium transition-all duration-200 group ${
                 isActive

@@ -8,6 +8,7 @@ import { AuthProvider } from "./src/components/context/authContext";
 import ProtectedRoute from "./src/components/context/protectedRoute";
 import NotFound from "./src/components/notFound";
 import StaffPage from "./src/pages/admin/staff";
+import AddUser from "./src/pages/admin/staff/pages/AddUser";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -62,6 +63,14 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.SETTING,
       element: <div>Setting</div>,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_ADD,
+      element: <AddUser />,
+    },
+    {
+      path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
+      element: <div>Category Management</div>,
     },
   ];
 

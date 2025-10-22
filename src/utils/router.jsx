@@ -16,8 +16,11 @@ export const ROUTERS = {
     TABLE: "/admin/table",
     INVENTORY: "/admin/inventory",
     STAFF: "/admin/staff",
+    STAFF_ADD: "/admin/staff/add",
+    STAFF_UPDATE: "/admin/staff/update/:id",
     REPORT: "/admin/report",
     SETTING: "/admin/setting",
+    CATEGORY_MANAGEMENT: "/admin/category-management",
   },
   NOT_FOUND: "*",
 };
