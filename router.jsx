@@ -9,6 +9,7 @@ import ProtectedRoute from "./src/components/context/protectedRoute";
 import NotFound from "./src/components/notFound";
 import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
+import OrderPage from "./src/pages/admin/order";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -42,7 +43,7 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.ORDER,
-      element: <div>Order</div>,
+      element: <OrderPage />,
     },
     {
       path: ROUTERS.ADMIN.TABLE,

@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTERS } from "../../../utils/router";
-
 const StaffPage = () => {
   const [staffData, setStaffData] = useState([]);
   const [loading, setLoading] = useState(true);
