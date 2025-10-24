@@ -13,9 +13,7 @@ const LoginPage = () => {
     username: "",
     password: "",
   });
-
-  const { user } = useAuth();
-
+  const [loading, setLoading] = useState(false);
   const { login, loginGoogle } = useAuth();
 
   const handleChange = (e) => {
@@ -26,15 +24,18 @@ const LoginPage = () => {
     }));
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      await login(formData);
-      if (user.isAdmin) {
+      const loggedInUser = await login(formData);
+      if (loggedInUser.isAdmin) {
         navigate(ROUTERS.ADMIN.DASHBOARD);
-      } else if (user.isStaff) {
+      } else if (loggedInUser.isStaff) {
         navigate(ROUTERS.ADMIN.STAFF);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Login error:", error);
       alert("Login failed. Please check your credentials and try again.");
     }
@@ -61,7 +62,7 @@ const LoginPage = () => {
             Welcome Back
           </h2>
           <p className="text-gray-600 mb-8">Please sign in to your account</p>
-          <div className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label
                 htmlFor="email"
@@ -72,6 +73,7 @@ const LoginPage = () => {
               <input
                 name="username"
                 value={formData.username}
+                required
                 onChange={handleChange}
                 type="text"
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
@@ -91,6 +93,7 @@ const LoginPage = () => {
                   name="password"
                   onChange={handleChange}
                   value={formData.password}
+                  required
                   className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="••••••••"
                 />
@@ -108,13 +111,19 @@ const LoginPage = () => {
               </div>
             </div>
             <button
-              type="button"
-              onClick={() => handleLogin(formData)}
-              className="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 px-4 font-semibold rounded-md text-white 
+                ${
+                  loading
+                    ? "bg-indigo-400"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                } 
+                focus:outline-none focus:ring-2 focus:ring-indigo-500`}
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </button>
-          </div>
+          </form>
           <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">

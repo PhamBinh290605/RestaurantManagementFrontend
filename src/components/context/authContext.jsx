@@ -71,14 +71,16 @@ export const AuthProvider = ({ children }) => {
       const decodedToken = jwtDecode(token);
       // console.log("Decoded Token:", decodedToken);
 
-      setUser({
+      const userInfo = {
         username: decodedToken.Username || "",
         isAdmin: decodedToken.Role.includes("Admin"),
         isStaff: decodedToken.Role.includes("Staff"),
         token: token,
-      });
-
+      };
       localStorage.setItem("token", token);
+
+      setUser(userInfo);
+      return userInfo;
     } catch (error) {
       console.error("Login error:", error);
     }
