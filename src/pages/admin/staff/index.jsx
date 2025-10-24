@@ -59,10 +59,10 @@ const StaffPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-6">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Danh Sách Nhân Viên
+              List Staff
             </h1>
             <p className="text-slate-500 mt-2 text-sm sm:text-base">
-              Quản lý thông tin nhân viên một cách dễ dàng
+              Manage staff information easily
             </p>
           </div>
           <button
@@ -70,7 +70,7 @@ const StaffPage = () => {
             className="group flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:-translate-y-1 transition-all duration-300 font-medium max-w-max"
           >
             <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            Thêm Nhân Viên
+            Add New Staff
           </button>
         </div>
 
@@ -80,7 +80,7 @@ const StaffPage = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Tìm kiếm theo tên hoặc email..."
+              placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-6 py-3 bg-white/50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 placeholder-slate-400"
@@ -94,19 +94,17 @@ const StaffPage = () => {
             <div className="flex items-center justify-center py-16">
               <div className="flex flex-col items-center gap-4">
                 <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                <p className="text-slate-500">
-                  Đang tải danh sách nhân viên...
-                </p>
+                <p className="text-slate-500">Loading staff list...</p>
               </div>
             </div>
           ) : filteredStaff.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <User className="w-20 h-20 text-slate-300 mx-auto mb-6" />
               <h3 className="text-lg font-semibold text-slate-600 mb-2">
-                Chưa có nhân viên nào
+                No staff found
               </h3>
               <p className="text-slate-500 max-w-sm">
-                Hãy thêm nhân viên đầu tiên để bắt đầu quản lý đội ngũ của bạn
+                Please add your first staff member to start managing your team.
               </p>
             </div>
           ) : (
@@ -115,22 +113,22 @@ const StaffPage = () => {
                 <thead className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10">
                   <tr className="border-b border-slate-200/50">
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Thông Tin
+                      Username
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
                       Email
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Số Điện Thoại
+                      Phone Number
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Vai Trò
+                      Role
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Trạng Thái
+                      Status
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Thao Tác
+                      Actions
                     </th>
                   </tr>
                 </thead>

@@ -9,6 +9,8 @@ import ProtectedRoute from "./src/components/context/protectedRoute";
 import NotFound from "./src/components/notFound";
 import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
+import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
+import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -71,6 +73,14 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
       element: <div>Category Management</div>,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_SHIFT_ASSIGNMENTS,
+      element: <ShiftAssignmentPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS,
+      element: <RegisterShiftPage />,
     },
   ];
 
