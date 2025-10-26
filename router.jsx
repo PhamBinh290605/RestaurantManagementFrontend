@@ -11,6 +11,9 @@ import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
 import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
+import CreateInventory from "./src/pages/admin/inventory/pages/CreateInventory";
+import AddItemInventory from "./src/pages/admin/inventory/pages/AddItemInventory";
+import ListInventory from "./src/pages/admin/inventory/pages/ListInventory";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -81,6 +84,18 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS,
       element: <RegisterShiftPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_CREATE,
+      element: <CreateInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_ADD_ITEM,
+      element: <AddItemInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_LIST,
+      element: <ListInventory />,
     },
   ];
 
