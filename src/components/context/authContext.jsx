@@ -8,6 +8,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({
+    UserId: "",
     username: "",
     isAdmin: false,
     isStaff: false,
@@ -37,6 +38,7 @@ export const AuthProvider = ({ children }) => {
         }
 
         setUser({
+          UserId: decodedToken.UserId,
           username: decodedToken.Role || "",
           isAdmin,
           isStaff,
@@ -72,6 +74,7 @@ export const AuthProvider = ({ children }) => {
       // console.log("Decoded Token:", decodedToken);
 
       const userInfo = {
+        UserId: decodedToken.UserId,
         username: decodedToken.Username || "",
         isAdmin: decodedToken.Role.includes("Admin"),
         isStaff: decodedToken.Role.includes("Staff"),
@@ -116,6 +119,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("token", token);
 
       setUser({
+        UserId: decodedToken.UserId,
         username: decodedToken.Role || "",
         isAdmin: decodedToken.Role.includes("Admin"),
         isStaff: decodedToken.Role.includes("Staff"),

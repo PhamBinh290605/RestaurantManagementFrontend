@@ -11,6 +11,7 @@ import {
   Save,
   AlertCircle,
 } from "lucide-react";
+import { useAuth } from "../../../../components/context/authContext";
 
 const RegisterShiftPage = () => {
   const [shifts, setShifts] = useState([]);
@@ -19,8 +20,10 @@ const RegisterShiftPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState(null);
+  const { user } = useAuth();
+  const [registeredShifts, setRegisteredShifts] = useState([]);
 
-  // Mock shifts (có thể fetch từ API)
+  // Mock shifts
   useEffect(() => {
     const mockShifts = [
       {
@@ -45,13 +48,43 @@ const RegisterShiftPage = () => {
     setShifts(mockShifts);
   }, []);
 
-  //  CHECK IF DATE IS FUTURE (KHÔNG PHẢI QUÁ KHỨ)
+  // Get all assignment
+
+  useEffect(() => {
+    getAllAssignment();
+  }, []);
+
+  const getAllAssignment = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5268/api/v1/shiftAssignment/getAll/${user.UserId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.log("Fail to fetch api");
+      }
+
+      const data = await response.json();
+      setRegisteredShifts(data.result);
+    } catch (err) {
+      console.log("Errol", err);
+    }
+  };
+
+  //  CHECK IF DATE IS FUTURE
   const isFutureDate = (date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time để so sánh ngày
+    today.setHours(0, 0, 0, 0);
     const selected = new Date(date);
     selected.setHours(0, 0, 0, 0);
-    return selected >= today;
+    return selected > today;
   };
 
   // CUSTOM DATE FUNCTIONS
@@ -113,7 +146,6 @@ const RegisterShiftPage = () => {
         type: "error",
         message: "Cannot register shifts for past dates!",
       });
-
       return;
     }
 
@@ -151,20 +183,20 @@ const RegisterShiftPage = () => {
     setSubmitMessage(null);
 
     try {
+      const bodyData = selectedShifts.map((item) => ({
+        ShiftId: item.shiftId,
+        DateTime: item.date,
+      }));
+
       const response = await fetch(
-        "http://localhost:5268/api/v1/staff/shifts/register",
+        `http://localhost:5268/api/v1/shiftAssignment/create/${user.UserId}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            shifts: selectedShifts.map((s) => ({
-              shiftId: s.shiftId,
-              date: s.date,
-            })),
-          }),
+          body: JSON.stringify(bodyData),
         }
       );
 
@@ -173,12 +205,15 @@ const RegisterShiftPage = () => {
       }
 
       const result = await response.json();
+      // console.log("Data:", result);
+
       setSubmitMessage({
         type: "success",
         message: `Successfully registered ${selectedShifts.length} shift(s)!`,
       });
-      setSelectedShifts([]); // Clear selection
+      setSelectedShifts([]);
       setSelectedDate(null);
+      getAllAssignment();
     } catch (error) {
       console.error("Submit error:", error);
       setSubmitMessage({
@@ -209,10 +244,19 @@ const RegisterShiftPage = () => {
     );
   };
 
+  const isShiftRegistered = (shiftId) => {
+    return registeredShifts.some(
+      (s) =>
+        s.shiftId === shiftId &&
+        s.workDate.split("T")[0] === formatDate(selectedDate)
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/30 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
+        {/* {console.log("Registered Shifts:", registeredShifts)} */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20">
             <User className="w-6 h-6 text-blue-600" />
@@ -343,7 +387,7 @@ const RegisterShiftPage = () => {
 
           {/* SHIFT SELECTION */}
           <div>
-            <div className="bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 overflow-hidden sticky top-6">
+            <div className="bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 top-6">
               <div className="p-6 border-b bg-gradient-to-r from-blue-50/60 to-indigo-50/60">
                 <h3 className="font-semibold text-slate-700 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
@@ -371,11 +415,13 @@ const RegisterShiftPage = () => {
                   <button
                     key={shift.id}
                     onClick={() => toggleShift(shift.id)}
-                    disabled={!selectedDate}
+                    disabled={!selectedDate || isShiftRegistered(shift.id)}
                     className={`
                       w-full p-4 rounded-xl font-medium text-sm transition-all duration-300 border-2 shadow-sm
                       ${
-                        isShiftSelected(shift.id)
+                        isShiftRegistered(shift.id)
+                          ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
+                          : isShiftSelected(shift.id)
                           ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
                           : `bg-white/60 text-slate-700 border-slate-200/60 hover:border-blue-300/60 hover:shadow-md hover:scale-102 ${
                               !selectedDate
@@ -431,7 +477,6 @@ const RegisterShiftPage = () => {
                 </button>
               </div>
             </div>
-
             {/* Selected Shifts Summary */}
             {selectedShifts.length > 0 && (
               <div className="mt-6 bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 p-6">
