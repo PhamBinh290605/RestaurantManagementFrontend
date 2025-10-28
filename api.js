@@ -2,9 +2,6 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:5268/api/v1",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 // Tự động gắn token cho mọi request

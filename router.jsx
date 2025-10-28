@@ -12,6 +12,9 @@ import AddUser from "./src/pages/admin/staff/pages/AddUser";
 import OrderPage from "./src/pages/admin/order";
 import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
+import MenuPage from "./src/pages/admin/menu";
+import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
+import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -41,7 +44,15 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.MENU_MANAGEMENT,
-      element: <div>Menu Management</div>,
+      element: <MenuPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.ADD_MENU_ITEM,
+      element: <AddMenuItemPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.EDIT_MENU_ITEM,
+      element: <EditMenuItemPage />,
     },
     {
       path: ROUTERS.ADMIN.ORDER,
