@@ -43,7 +43,7 @@ const createMenuItemAPI = async (formData) => {
 
 const fetchCategoriesAPI = async () => {
     const response = await api.get('/categories');
-    console.log("Fetching categories...");
+    console.log("Fetched categories:", response.data.result);
     return response.data.result;
 }
 

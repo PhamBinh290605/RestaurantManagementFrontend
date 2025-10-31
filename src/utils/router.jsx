@@ -13,7 +13,7 @@ export const ROUTERS = {
     DASHBOARD: "/admin/dashboard",
     MENU_MANAGEMENT: "/admin/menu-management",
     ADD_MENU_ITEM: "/admin/menu/add-menu-item",
-    EDIT_MENU_ITEM: "/admin/menuitem/update/:itemId",
+    EDIT_MENU_ITEM: "/admin/menuitems/update/:itemId",
     ORDER: "/admin/order",
     TABLE: "/admin/table",
     INVENTORY: "/admin/inventory",

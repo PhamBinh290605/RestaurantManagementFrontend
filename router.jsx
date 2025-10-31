@@ -15,6 +15,7 @@ import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
 import MenuPage from "./src/pages/admin/menu";
 import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
 import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
+import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -84,7 +85,7 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
-      element: <div>Category Management</div>,
+      element: <CategoryManager />,
     },
     {
       path: ROUTERS.ADMIN.STAFF_SHIFT_ASSIGNMENTS,

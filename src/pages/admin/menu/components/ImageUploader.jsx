@@ -1,14 +1,23 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { UploadCloud, Star, Trash2, ShieldCheck } from 'lucide-react';
+
 const ImageUploader = ({ onImagesChange, initialImages = [] }) => {
     const [images, setImages] = useState([]); // { file: File, url: string, isFeatured: boolean }
     const fileInputRef = useRef(null);
+
+    const getImagesKey = (imgs) => {
+        return JSON.stringify(imgs.map(img => ({ url: img.url, isFeatured: img.isFeatured })));
+    };
 
     useEffect(() => {
         // Chỉ cập nhật nếu initialImages có thật và khác với state hiện tại
         // để tránh re-render không cần thiết
         if (initialImages && initialImages.length > 0) {
-            setImages(initialImages);
+            const initialKey = getImagesKey(initialImages);
+            const currentKey = getImagesKey(images);
+            if (initialKey !== currentKey) {
+                setImages(initialImages);
+            }
         }
     }, [initialImages]);
 
@@ -28,8 +37,6 @@ const ImageUploader = ({ onImagesChange, initialImages = [] }) => {
             });
         };
     }, [images]);
-
-
 
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
@@ -123,4 +130,4 @@ const ImageUploader = ({ onImagesChange, initialImages = [] }) => {
     );
 };
 
-export default ImageUploader;
+export default ImageUploader;  

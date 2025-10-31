@@ -5,9 +5,7 @@ import MenuItemForm from '../components/MenuItemForm';
 import { Edit, AlertCircle } from 'lucide-react';
 import api from '../../../../../api';
 
-// --- GIẢ LẬP CÁC HÀM GỌI API ---
 
-// Giả lập API để lấy chi tiết một món ăn
 const fetchMenuItemAPI = async (itemId) => {
     console.log(`Fetching data for item ID: ${itemId}`);
 
@@ -35,35 +33,49 @@ const fetchMenuItemAPI = async (itemId) => {
     // };
 };
 
+
+const fetchCategoriesAPI = async () => {
+    const response = await api.get('/categories');
+    console.log("Fetched categories:", response.data.result);
+    return response.data.result;
+};
+
 // Giả lập API để cập nhật món ăn
 const updateMenuItemAPI = async (itemId, formData) => {
     console.log(`Updating item ID: ${itemId} with data:`, formData);
-    await new Promise(res => setTimeout(res, 1000));
-    return { success: true, data: { id: itemId, ...formData } };
+    const response = await api.put(`/menuitems/update/${itemId}`, formData);
+    return response.data.result;
 };
 
 
 
 const EditMenuItemPage = () => {
-    const { itemId } = useParams(); 
+    const { itemId } = useParams();
     const navigate = useNavigate();
-
     const [initialData, setInitialData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [categories, setCategories] = useState([]);
+    const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
 
     useEffect(() => {
         const loadMenuItem = async () => {
             try {
                 setIsLoading(true);
-                const data = await fetchMenuItemAPI(itemId);
+                setIsCategoriesLoading(true);
+                const [data, fetchedCategories] = await Promise.all([
+                    fetchMenuItemAPI(itemId),
+                    fetchCategoriesAPI()
+                ]);
+                setCategories(fetchedCategories);
                 setInitialData(data);
             } catch (err) {
                 setError(err.message || 'Failed to fetch menu item data.');
                 toast.error('Could not load item details.');
             } finally {
                 setIsLoading(false);
+                setIsCategoriesLoading(false);
             }
         };
         loadMenuItem();
@@ -76,7 +88,7 @@ const EditMenuItemPage = () => {
         toast.promise(promise, {
             loading: 'Saving changes...',
             success: (res) => {
-                navigate('/admin/menu'); // Chuyển hướng về trang danh sách
+                navigate('/admin/menu-management');
                 return `Successfully updated "${res.data.productName}"!`;
             },
             error: 'Failed to save changes. Please try again.',
@@ -85,7 +97,7 @@ const EditMenuItemPage = () => {
             }
         });
     };
-    
+
     const renderContent = () => {
 
         if (error) {
@@ -99,15 +111,17 @@ const EditMenuItemPage = () => {
         }
 
         if (initialData) {
-             return (
+            return (
                 <MenuItemForm
                     initialData={initialData}
                     onSubmit={handleUpdate}
                     isSaving={isSaving}
+                    categories={categories}
+                    isCategoriesLoading={isCategoriesLoading}
                 />
             );
         }
-        
+
         return null;
     };
 
@@ -128,7 +142,7 @@ const EditMenuItemPage = () => {
                         </div>
                     </div>
                 </header>
-                
+
                 {renderContent()}
             </div>
         </div>

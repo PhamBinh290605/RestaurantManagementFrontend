@@ -108,7 +108,6 @@ const EmptyState = ({ onClearFilters }) => (
 const FilterBar = ({ searchTerm, setSearchTerm, statusFilter, setStatusFilter, categoryFilter, setCategoryFilter, uniqueCategories }) => {
     return (
         <div className="mb-6 space-y-4 md:flex md:items-center md:justify-between md:space-y-0 md:space-x-4">
-            {/* Search Input */}
             <div className="relative flex-grow">
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                     <Search className="h-5 w-5 text-gray-400" />
@@ -207,8 +206,8 @@ const MenuPage = () => {
                 const res = await api.get('/menuitems');
                 setAllMenuItems(res.data.result);
 
-                // const data = getMockData();
-                // setAllMenuItems(res.data.result);
+                // const data = getMockData();;
+                // setAllMenuItems(res.data.result)
 
             } catch (error) {
                 toast.error("Tải dữ liệu thất bại.");
