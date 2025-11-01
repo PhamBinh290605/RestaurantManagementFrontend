@@ -15,6 +15,8 @@ export const ROUTERS = {
     ADD_MENU_ITEM: "/admin/menu/add-menu-item",
     EDIT_MENU_ITEM: "/admin/menuitems/update/:itemId",
     ORDER: "/admin/order",
+    ORDER_MANAGER: "/admin/order-manager",
+    ORDER_DETAIL: "/admin/order/:orderId",
     TABLE: "/admin/table",
     INVENTORY: "/admin/inventory",
     STAFF: "/admin/staffs",

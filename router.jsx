@@ -9,13 +9,15 @@ import ProtectedRoute from "./src/components/context/protectedRoute";
 import NotFound from "./src/components/notFound";
 import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
-import OrderPage from "./src/pages/admin/order";
 import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
 import MenuPage from "./src/pages/admin/menu";
 import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
 import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
 import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
+import OrderManagerPage from "./src/pages/admin/order-manager";
+import OrderPage from "./src/pages/admin/order";
+import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -58,6 +60,14 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.ORDER,
       element: <OrderPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.ORDER_MANAGER,
+      element: <OrderManagerPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.ORDER_DETAIL,
+      element: <OrderDetailPage />,
     },
     {
       path: ROUTERS.ADMIN.TABLE,
