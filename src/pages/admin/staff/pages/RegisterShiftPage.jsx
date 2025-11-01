@@ -49,7 +49,6 @@ const RegisterShiftPage = () => {
   }, []);
 
   // Get all assignment
-
   useEffect(() => {
     getAllAssignment();
   }, []);
@@ -74,11 +73,11 @@ const RegisterShiftPage = () => {
       const data = await response.json();
       setRegisteredShifts(data.result);
     } catch (err) {
-      console.log("Errol", err);
+      console.log("Error", err);
     }
   };
 
-  //  CHECK IF DATE IS FUTURE
+  // CHECK IF DATE IS FUTURE
   const isFutureDate = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -127,6 +126,14 @@ const RegisterShiftPage = () => {
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
     return `${year}-${month}-${day}`;
+  };
+
+  // count shift
+  const getRegisteredShiftCount = (date) => {
+    const formattedDate = formatDate(date);
+    return registeredShifts.filter(
+      (s) => s.workDate.split("T")[0] === formattedDate
+    ).length;
   };
 
   const monthDays = getMonthDays(currentMonth);
@@ -205,7 +212,6 @@ const RegisterShiftPage = () => {
       }
 
       const result = await response.json();
-      // console.log("Data:", result);
 
       setSubmitMessage({
         type: "success",
@@ -256,7 +262,6 @@ const RegisterShiftPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/30 p-6">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        {/* {console.log("Registered Shifts:", registeredShifts)} */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-3 px-6 py-4 bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20">
             <User className="w-6 h-6 text-blue-600" />
@@ -355,13 +360,14 @@ const RegisterShiftPage = () => {
                       day.toDateString() === new Date().toDateString();
                     const isSelected =
                       selectedDate?.toDateString() === day.toDateString();
+                    const registeredCount = getRegisteredShiftCount(day);
 
                     return (
                       <button
                         key={index}
                         onClick={() => setSelectedDate(day)}
                         className={`
-                          relative p-3 rounded-lg text-sm font-medium transition-all duration-300 h-20
+                          relative p-3 rounded-lg text-sm font-medium transition-all duration-300 h-20 flex flex-col items-center justify-start
                           ${
                             isSelected
                               ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg scale-105"
@@ -371,10 +377,23 @@ const RegisterShiftPage = () => {
                           }
                         `}
                       >
-                        <span className="font-semibold">{day.getDate()}</span>
-                        {isSelected && (
-                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center border-2 border-green-500/50">
-                            <CheckCircle className="w-3 h-3 text-green-600" />
+                        <span className="font-semibold text-lg">
+                          {day.getDate()}
+                        </span>
+
+                        {registeredCount > 0 && (
+                          <div
+                            className={`
+                              absolute top-1 right-1 min-w-5 h-5 flex items-center justify-center
+                              text-xs font-bold rounded-full shadow-md z-10
+                              ${
+                                isSelected
+                                  ? "bg-white text-blue-600"
+                                  : "bg-emerald-500 text-white"
+                              }
+                            `}
+                          >
+                            {registeredCount}
                           </div>
                         )}
                       </button>
@@ -399,8 +418,7 @@ const RegisterShiftPage = () => {
                   </p>
                 ) : isFutureDate(selectedDate) ? (
                   <p className="text-sm text-slate-500 mt-2">
-                    Select your shifts for{" "}
-                    {new Date(selectedDate).toLocaleDateString()}
+                    Select your shifts for {formatDate(new Date(selectedDate))}
                   </p>
                 ) : (
                   <p className="text-sm text-red-500 font-medium mt-2 flex items-center gap-2">
@@ -477,6 +495,7 @@ const RegisterShiftPage = () => {
                 </button>
               </div>
             </div>
+
             {/* Selected Shifts Summary */}
             {selectedShifts.length > 0 && (
               <div className="mt-6 bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 p-6">
@@ -497,9 +516,7 @@ const RegisterShiftPage = () => {
                         </div>
                       </div>
                       <div className="text-xs font-medium text-green-600 bg-green-100/60 px-2 py-1 rounded-full">
-                        {selectedDate
-                          ? new Date(selectedDate).toLocaleDateString()
-                          : ""}
+                        {shift.date}
                       </div>
                     </div>
                   ))}

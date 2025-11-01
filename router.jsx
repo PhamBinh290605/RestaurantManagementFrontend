@@ -12,6 +12,12 @@ import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
 import UpdateUser from "./src/pages/admin/staff/pages/UpdateUser";
 import AttendAssignment from "./src/pages/admin/staff/pages/AttendAssignment";
+import Menu from "./src/pages/user/menu";
+import Reservation from "./src/pages/user/Reservation";
+import AboutPage from "./src/pages/user/aboutPage";
+import Contact from "./src/pages/user/contact/Index";
+import Album from "./src/pages/user/album";
+import HomePage from "./src/pages/user/homePage";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -23,11 +29,27 @@ const RouterCustom = () => {
   const userRouters = [
     {
       path: ROUTERS.USER.HOME,
-      element: <div>Hello</div>,
+      element: <HomePage />,
     },
     {
       path: ROUTERS.USER.ABOUT,
-      element: <div>Hiii</div>,
+      element: <AboutPage />,
+    },
+    {
+      path: ROUTERS.USER.MENU,
+      element: <Menu />,
+    },
+    {
+      path: ROUTERS.USER.RESERVATION,
+      element: <Reservation />,
+    },
+    {
+      path: ROUTERS.USER.ALBUM,
+      element: <Album />,
+    },
+    {
+      path: ROUTERS.USER.CONTACT,
+      element: <Contact />,
     },
   ];
   const adminRouters = [

@@ -7,7 +7,9 @@ export const ROUTERS = {
     HOME: "/",
     ABOUT: "about",
     MENU: "menu",
-    NEWS: "news",
+    ALBUM: "/album",
+    CONTACT: "/contact",
+    RESERVATION: "/reservation",
   },
   ADMIN: {
     DASHBOARD: "/admin/dashboard",

@@ -1,0 +1,20 @@
+{
+  "col-1": {
+    "name": "BTM – Ăn bát cơm đầy",
+    "address": "Cơ sở : Số 3 Cầu Giấy, Láng Thượng , Hà Nội",
+    "p": "Nhà hàng có chỗ để xe ô tô"
+  },
+  "col-2": {
+    "title": "Giờ mở cửa",
+    "p1": "Sáng",
+    "p2": "Chiều",
+    "p3": "Tất cả các ngày trong tuần"
+  },
+  "col-3": {
+    "title": "Mạng xã hội"
+  },
+  "Copy": {
+    "p1": "Bảo mật thông tin",
+    "p2": "Liên hệ"
+  }
+}

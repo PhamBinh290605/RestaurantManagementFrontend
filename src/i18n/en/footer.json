@@ -1,0 +1,20 @@
+{
+  "col-1": {
+    "name": "BTM – A Bowl Full of Rice",
+    "address": "Branch: No. 3 Cau Giay, Lang Thuong, Hanoi",
+    "p": "The restaurant has parking space for cars"
+  },
+  "col-2": {
+    "title": "Opening Hours",
+    "p1": "Morning",
+    "p2": "Afternoon",
+    "p3": "Open every day of the week"
+  },
+  "col-3": {
+    "title": "Social Media"
+  },
+  "Copy": {
+    "p1": "Privacy Policy",
+    "p2": "Contact"
+  }
+}

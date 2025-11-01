@@ -1,0 +1,11 @@
+{
+  "title": "Home",
+  "Menu": {
+    "about": "About",
+    "menu": "Menu",
+    "booking": "Booking",
+    "album": "Gallery",
+    "contact": "Contact"
+  },
+  "Search": "Search"
+}
