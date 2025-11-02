@@ -18,7 +18,7 @@ const FormLabel = ({ htmlFor, children }) => (
 );
 // --- Hết component Form con ---
 
-const availableUnits = ["kg", "g", "ml", "l", "pcs", "pack"];
+const availableUnits = ["kg", "l", "pcs", "pack"];
 
 const initialItemState = {
   name: "",
