@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { toast } from 'sonner';
+import toast, { Toaster } from "react-hot-toast";
 import { Plus, Pencil, Trash2, UtensilsCrossed, Search, X, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTERS } from '../../../utils/router';
@@ -8,25 +8,6 @@ import api from '../../../../api';
 // --- CẤU HÌNH ---
 const ITEMS_PER_PAGE = 8; // Đặt số lượng sản phẩm hiển thị trên mỗi trang
 
-// const getMockData = () => ({
-//     result: [
-//         { id: 1, productName: "Salad Rau Củ Tươi", description: "Salad trộn với dầu giấm và các loại rau củ tươi ngon.", price: 89.00, isAvailable: true, categoryName: "Món khai vị", imageUrls: [{ url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800" }] },
-//         { id: 2, productName: "Bít tết bò Mỹ", description: "Bít tết bò Mỹ hảo hạng dùng kèm khoai tây chiên.", price: 250.00, isAvailable: true, categoryName: "Món chính", imageUrls: [{ url: "https://images.unsplash.com/photo-1546964124-0cce460f38ef?q=80&w=800" }] },
-//         { id: 3, productName: "Cá hồi áp chảo", description: "Cá hồi Na-uy tươi ngon áp chảo, ăn kèm măng tây.", price: 180.00, isAvailable: false, categoryName: "Món chính", imageUrls: [{ url: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800" }] },
-//         { id: 4, productName: "Pizza Hải Sản", description: "Pizza đế mỏng giòn rụm với tôm, mực, và phô mai.", price: 155.00, isAvailable: true, categoryName: "Món Ý", imageUrls: [{ url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800" }] },
-//         { id: 5, productName: "Tiramisu", description: "Bánh tráng miệng Tiramisu cổ điển của Ý.", price: 75.00, isAvailable: true, categoryName: "Tráng miệng", imageUrls: [{ url: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?q=80&w=800" }] },
-//         { id: 6, productName: "Trà Chanh", description: "Thức uống giải nhiệt sảng khoái từ trà và chanh tươi.", price: 30.00, isAvailable: false, categoryName: "Thức uống", imageUrls: [{ url: "https://images.unsplash.com/photo-1556745753-b2904692b3cd?q=80&w=800" }] },
-//         { id: 7, productName: "Spaghetti Carbonara", description: "Mỳ Ý sốt kem trứng và thịt heo xông khói.", price: 125.00, isAvailable: true, categoryName: "Món Ý", imageUrls: [{ url: "https://images.unsplash.com/photo-1621996346565-e326b20f545c?q=80&w=800" }] },
-//         { id: 8, productName: "Cà Phê Sữa Đá", description: "Hương vị cà phê đậm đà hòa quyện với sữa đặc.", price: 25.00, isAvailable: true, categoryName: "Thức uống", imageUrls: [{ url: "https://images.unsplash.com/photo-1551030173-1a29ab268945?q=80&w=800" }] },
-//         { id: 9, productName: "Gỏi cuốn tôm thịt", description: "Món khai vị truyền thống Việt Nam, tươi mát và bổ dưỡng.", price: 60.00, isAvailable: true, categoryName: "Món khai vị", imageUrls: [{ url: "https://images.unsplash.com/photo-1625944230153-a58f09076044?q=80&w=800" }] },
-//         { id: 10, productName: "Phở Bò", description: "Món ăn quốc hồn quốc túy của Việt Nam với nước dùng đậm đà.", price: 50.00, isAvailable: true, categoryName: "Món chính", imageUrls: [{ url: "https://images.unsplash.com/photo-1583218965038-532a79472344?q=80&w=800" }] },
-//         { id: 11, productName: "Bánh Mì Kẹp", description: "Bánh mì giòn rụm kẹp thịt, pate và rau thơm.", price: 20.00, isAvailable: false, categoryName: "Món chính", imageUrls: [{ url: "https://images.unsplash.com/photo-1592415486689-86f768ce3723?q=80&w=800" }] },
-//         { id: 12, productName: "Panna Cotta", description: "Món tráng miệng mềm mịn, béo ngậy từ Ý.", price: 65.00, isAvailable: true, categoryName: "Tráng miệng", imageUrls: [{ url: "https://images.unsplash.com/photo-1542383232-243365825310?q=80&w=800" }] },
-//     ]
-// });
-
-
-// --- COMPONENT CON: CARD SKELETON (HIỆU ỨNG CHỜ TẢI) ---
 const CardSkeleton = () => (
     <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-md">
         <div className="aspect-video w-full animate-pulse bg-gray-200"></div>
@@ -44,13 +25,20 @@ const CardSkeleton = () => (
 );
 
 // --- COMPONENT CON: CARD MÓN ĂN ---
-const MenuItemCard = ({ item }) => {
+const MenuItemCard = ({ item, onDelete }) => {
     const navigate = useNavigate();
     const formatCurrency = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value * 1000);
 
     const handleEdit = () => {
         const editUrl = ROUTERS.ADMIN.EDIT_MENU_ITEM.replace(':itemId', item.id);
         navigate(editUrl);
+    }
+
+    const handleDelete = () => {
+        // Gọi hàm được truyền từ component cha, và truyền nguyên đối tượng 'item'
+        if (onDelete) {
+            onDelete(item);
+        }
     }
 
     return (
@@ -79,9 +67,18 @@ const MenuItemCard = ({ item }) => {
                 <button onClick={handleEdit} className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-blue-600">
                     <Pencil size={16} /> Edit
                 </button>
-                <button className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600">
-                    <Trash2 size={16} /> Delete
-                </button>
+                {item.isAvailable ? (
+                    <button onClick={handleDelete} className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-red-50 hover:text-red-600">
+                        <Trash2 size={16} />
+                        <span>Delete</span>
+                    </button>
+                ) : (
+                    // Hiển thị một trạng thái "đã bị vô hiệu hóa" khi món ăn không còn khả dụng
+                    <div className="flex items-center justify-center gap-2 py-3 text-sm font-medium text-gray-400 cursor-not-allowed">
+                        <Trash2 size={16} />
+                        <span>Deleted</span>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -195,7 +192,7 @@ const MenuPage = () => {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1); // State cho trang hiện tại
     const navigate = useNavigate();
-    
+
 
     // --- Data Fetching ---
     useEffect(() => {
@@ -217,6 +214,34 @@ const MenuPage = () => {
         };
         fetchMenuItems();
     }, []);
+
+    const handleDeleteItem = async (itemToUpdate) => {
+        // Nội dung xác nhận nên phản ánh đúng hành động "xóa" (theo tên endpoint)
+        const confirmDelete = window.confirm(`Bạn có chắc chắn muốn xóa món "${itemToUpdate.productName}"? Hành động này sẽ chuyển món ăn sang trạng thái "Hết hàng".`);
+        if (!confirmDelete) return;
+
+        try {
+            // 1. GỌI ĐÚNG ENDPOINT DELETE CỦA BẠN
+            await api.delete(`/menuitems/delete/${itemToUpdate.id}`);
+
+            // 2. CẬP NHẬT STATE TRÊN GIAO DIỆN THEO LOGIC "SOFT DELETE"
+            // Backend xóa mềm, nên frontend cũng phải cập nhật mềm.
+            // Chúng ta sẽ tìm món ăn và cập nhật trạng thái isAvailable của nó.
+            setAllMenuItems(prevItems =>
+                prevItems.map(item =>
+                    item.id === itemToUpdate.id
+                        ? { ...item, isAvailable: false } // Tạo object mới với isAvailable = false
+                        : item // Giữ nguyên các item khác
+                )
+            );
+
+            toast.success(`Đã xóa thành công món: "${itemToUpdate.productName}"`);
+
+        } catch (error) {
+            console.error("Lỗi khi xóa món ăn:", error);
+            toast.error("Có lỗi xảy ra khi xóa món ăn. Vui lòng thử lại.");
+        }
+    };
 
     // --- Lọc và tìm kiếm dữ liệu (Tối ưu bằng useMemo) ---
     const filteredMenuItems = useMemo(() => {
@@ -284,7 +309,7 @@ const MenuPage = () => {
                     ) : paginatedItems.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                                {paginatedItems.map(item => <MenuItemCard key={item.id} item={item} />)}
+                                {paginatedItems.map(item => <MenuItemCard key={item.id} item={item} onDelete={handleDeleteItem} />)}
                             </div>
                             <Pagination
                                 currentPage={currentPage}

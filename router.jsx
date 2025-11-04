@@ -16,8 +16,10 @@ import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
 import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
 import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
 import OrderManagerPage from "./src/pages/admin/order-manager";
-import OrderPage from "./src/pages/admin/order";
+import OrderFeature from "./src/pages/admin/order";
+import TableSelectionPage from "./src/pages/admin/order/pages/TableSelectionPage";
 import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
+import ReservationPage from "./src/pages/admin/Reservation";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -59,7 +61,7 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.ORDER,
-      element: <OrderPage />,
+      element: <TableSelectionPage />,
     },
     {
       path: ROUTERS.ADMIN.ORDER_MANAGER,
@@ -72,6 +74,10 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.TABLE,
       element: <div>Table</div>,
+    },
+    {
+      path: ROUTERS.ADMIN.RESERVATION,
+      element: <ReservationPage />,
     },
     {
       path: ROUTERS.ADMIN.INVENTORY,

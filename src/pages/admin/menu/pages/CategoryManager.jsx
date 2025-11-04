@@ -37,12 +37,13 @@ class CategoryManager extends Component {
 
     handleSave = async (formData) => {
         const { currentCategory } = this.state;
+        // console.log(this.setState);
         try {
             if (currentCategory) {
+                console.log("Cập nhật danh mục:", currentCategory.id, formData);
                 await api.put(`/categories/${currentCategory.id}`, formData);
             } else {
                 await api.post('/categories', formData);
-                
             }
             this.closeModal();
             this.loadCategories(); // Tải lại dữ liệu sau khi lưu
@@ -74,15 +75,15 @@ class CategoryManager extends Component {
     closeModal = () => {
         this.setState({ isModalOpen: false, currentCategory: null });
     };
-    
+
     handleSearchChange = (event) => {
         this.setState({ searchTerm: event.target.value });
     };
-    
+
     // --- Render Method ---
     render() {
         const { categories, loading, searchTerm, isModalOpen, currentCategory } = this.state;
-        
+
         const filteredCategories = categories.filter(cat =>
             cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             cat.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -161,11 +162,11 @@ class CategoryManager extends Component {
                 </div>
 
                 {/* Modal Form */}
-                <CategoryFormModal 
-                    isOpen={isModalOpen} 
-                    onClose={this.closeModal} 
-                    onSave={this.handleSave} 
-                    currentCategory={currentCategory} 
+                <CategoryFormModal
+                    isOpen={isModalOpen}
+                    onClose={this.closeModal}
+                    onSave={this.handleSave}
+                    currentCategory={currentCategory}
                 />
             </div>
         );

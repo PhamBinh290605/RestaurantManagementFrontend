@@ -76,6 +76,11 @@ const Sidebar = ({ collapsed }) => {
           icon: <Table2 size={20} />,
         },
         {
+          name: "Réservation",
+          path: ROUTERS.ADMIN.RESERVATION,
+          icon: <Table2 size={20} />,
+        },
+        {
           name: "Inventory",
           path: ROUTERS.ADMIN.INVENTORY,
           icon: <Boxes size={20} />,
