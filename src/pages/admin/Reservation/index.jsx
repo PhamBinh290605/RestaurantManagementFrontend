@@ -17,18 +17,6 @@ import { motion } from "framer-motion";
 import api from "../../../../api";
 
 
-/* DANH SÁCH BÀN (ví dụ) */
-const ALL_TABLES = [
-    "Bàn 1",
-    "Bàn 2",
-    "Bàn 3",
-    "Bàn 4",
-    "Bàn 5",
-    "Bàn 6",
-    "Bàn VIP 1",
-    "Bàn VIP 2",
-];
-
 export default function BookingManagement() {
     const [bookings, setBookings] = useState([]);
     const [filtered, setFiltered] = useState([]);
@@ -38,15 +26,21 @@ export default function BookingManagement() {
     const [showCheckinModalFor, setShowCheckinModalFor] = useState(null);
     const [showCancelModalFor, setShowCancelModalFor] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(null);
     const [availableTables, setAvailableTables] = useState([]);
 
     useEffect(() => {
         loadBookings();
     }, []);
 
-    const fetchAvailableTables = async (arrivalTime) => {
+    const fetchAvailableTables = async (booking) => {
         try {
-            const res = await api.get("/tables/available", { params: { datetime: arrivalTime } });
+            const res = await api.get("/tables/available", {
+                params: {
+                    bookingId: booking.id,
+                    datetime: booking.arriveAt
+                }
+            });
 
             const tableNumbers = res.data?.result?.map((t) => t.tableNumber) || [];
 
@@ -58,7 +52,6 @@ export default function BookingManagement() {
         }
     };
 
-    // =========== Fetch data (mock) ===========
     const loadBookings = async () => {
         try {
             const res = await api.get("/reservations");
@@ -71,7 +64,6 @@ export default function BookingManagement() {
         }
     };
 
-    // =========== search & filter ===========
     useEffect(() => {
         let data = [...bookings];
         if (filterStatus !== "All") {
@@ -87,61 +79,83 @@ export default function BookingManagement() {
         setFiltered(data);
     }, [searchTerm, filterStatus, bookings]);
 
-    // =========== update booking status (mock + API TODO) ===========
-    const patchBookingStatus = async (id, newStatus) => {
-        const loader = toast.loading(`Cập nhật trạng thái...`);
+    // // =========== update booking status (mock + API TODO) ===========
+    // const patchBookingStatus = async (id, newStatus) => {
+    //     const loader = toast.loading(`Cập nhật trạng thái...`);
+    //     try {
+    //         // TODO: uncomment when API ready
+    //         // await axios.patch(`/bookings/${id}`, { status: newStatus });
+
+    //         // mock update local state
+    //         setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b)));
+
+    //         toast.success(`Cập nhật thành công`, { id: loader });
+    //     } catch (err) {
+    //         console.error(err);
+    //         toast.error("Có lỗi xảy ra", { id: loader });
+    //     }
+    // };
+
+    const checkinBooking = async (id) => {
         try {
-            // TODO: uncomment when API ready
-            // await axios.patch(`/bookings/${id}`, { status: newStatus });
+            console.log("Checking in booking with ID:", id);
+            await api.post(`/reservations/checkin/${id}`);
+            setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Seated" } : b)));
+        } catch (error) {
+            console.error("Error checking in booking:", error);
+        }
+    };
 
-            // mock update local state
-            setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b)));
-
-            toast.success(`Cập nhật thành công`, { id: loader });
+    const confirmBooking = async (booking) => {
+        const loader = toast.loading("Đang xác nhận...");
+        try {
+            console.log("Confirming booking:", booking);
+            const res = await api.post(`/reservations/confirm/${booking.id}`, booking);
+            console.log("Confirmed booking response:", res.data.result);
+            setBookings((prev) =>
+                prev.map((b) => (b.id === booking.id ? res.data.result : b))
+            );
+            toast.success("Đã xác nhận đơn thành công", { id: loader });
         } catch (err) {
             console.error(err);
-            toast.error("Có lỗi xảy ra", { id: loader });
+            toast.error("Xác nhận đơn thất bại", { id: loader });
         }
     };
 
-    const confirmBooking = async (id, data) => {
+    const fetchCancelableBookings = async (id) => {
         try {
-            console.log("Confirming booking with data:", data);
-            await api.post(`/reservations/confirm/${id}`, { ...data });
-            toast.success("Booking confirmed successfully");
-            setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Confirmed" } : b)));
-
-        } catch (error) {
-            console.error("Error confirming booking:", error);
+            const res = await api.delete(`/reservations/delete/${id}`);
+            console.log("Fetched cancelable bookings:", res.data.result);
+            setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status: "Canceled" } : b)));
+            // setBookings(res.data.result);
+        } catch (err) {
+            console.error(err);
+            toast.error("Tải danh sách đặt bàn thất bại");
         }
-
-
+    };
+    const patchBookingTables = async (booking) => {
+        const loader = toast.loading("Cập nhật bàn...");
+        try {
+            console.log("Updating tables for booking:", booking);
+            await api.put(`/reservations/update-tables/${booking.id}`, booking);
+            setBookings((prev) =>
+                prev.map((b) => (b.id === booking.id ? booking : b))
+            );
+            toast.success("Cập nhật bàn thành công", { id: loader });
+        } catch (err) {
+            console.error(err);
+            toast.error("Cập nhật bàn thất bại", { id: loader });
+        }
     };
 
-    // =========== update tables for a booking ===========
-    const patchBookingTables = async (booking) => {
-    const loader = toast.loading("Cập nhật bàn...");
-    try {
-        console.log("Updating tables for booking:", booking);
-        await api.put(`/reservations/update-tables/${booking.id}`, booking);
-        setBookings((prev) =>
-            prev.map((b) => (b.id === booking.id ? booking : b))
-        );
-        toast.success("Cập nhật bàn thành công", { id: loader });
-    } catch (err) {
-        console.error(err);
-        toast.error("Cập nhật bàn thất bại", { id: loader });
-    }
-};
 
-
-    // =========== create booking ===========
     const createBooking = async (payload) => {
         const loader = toast.loading("Tạo đơn...");
         try {
-            // TODO: const res = await axios.post('/bookings', payload); setBookings(prev => [res.data, ...prev]);
-            const newBooking = { id: Date.now(), ...payload };
-            setBookings((prev) => [newBooking, ...prev]);
+            console.log("Creating booking with payload:", payload);
+            const res = await api.post('/reservations', payload);
+            console.log("Created booking response:", res.data.result);
+            setBookings(prev => [res.data.result, ...prev]);
             toast.success("Tạo đơn thành công", { id: loader });
         } catch (err) {
             console.error(err);
@@ -155,14 +169,14 @@ export default function BookingManagement() {
             ? "bg-yellow-100 text-yellow-800"
             : s === "Confirmed"
                 ? "bg-green-100 text-green-800"
-                : s === "Occupied"
+                : s === "Seated"
                     ? "bg-blue-100 text-blue-800"
                     : s === "Canceled"
                         ? "bg-red-100 text-red-800"
                         : "";
 
     // Filter buttons
-    const FILTERS = ["All", "Pending", "Confirmed", "Occupied", "Canceled"];
+    const FILTERS = ["All", "Pending", "Confirmed", "Seated", "Canceled"];
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 p-8">
@@ -248,7 +262,7 @@ export default function BookingManagement() {
                                         <td className="py-4 px-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                                                    {b.customerName.split(" ").slice(-1)[0][0] || "U"}
+                                                    {b.customerName?.split(" ").slice(-1)[0][0] || "U"}
                                                 </div>
                                                 <div>
                                                     <div className="font-medium text-slate-800 flex items-center gap-2">
@@ -284,7 +298,7 @@ export default function BookingManagement() {
                                                 <div className="text-sm text-indigo-600 font-medium">{b.tableNumbers.join(", ")}</div>
                                                 <button
                                                     onClick={() => {
-                                                        fetchAvailableTables(b.arriveAt);
+                                                        fetchAvailableTables(b);
                                                         setShowTableModalFor(b);
                                                     }}
                                                     className="ml-2 px-2 py-1 text-xs bg-slate-100 rounded-md hover:bg-slate-200 flex items-center gap-1"
@@ -306,7 +320,7 @@ export default function BookingManagement() {
                                                 {b.status === "Pending" && (
                                                     <>
                                                         <button
-                                                            onClick={() => confirmBooking(b.id, b)}
+                                                            onClick={() => setShowConfirmModal(b)}
                                                             className="px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700 flex items-center gap-2"
                                                         >
                                                             <CheckSquare size={14} /> Confirm
@@ -338,7 +352,7 @@ export default function BookingManagement() {
                                                     </>
                                                 )}
 
-                                                {b.status === "Occupied" && (
+                                                {b.status === "Seated" && (
                                                     <>
                                                         <button
                                                             onClick={() => setShowCheckinModalFor(b)}
@@ -387,13 +401,26 @@ export default function BookingManagement() {
                     onClose={() => setShowTableModalFor(null)}
                     onSave={(selectedTables) => {
                         patchBookingTables({
-                        ...showTableModalFor,
-                        tableNumbers: selectedTables,
-                    });
+                            ...showTableModalFor,
+                            tableNumbers: selectedTables,
+                        });
                         setShowTableModalFor(null);
                     }}
                 />
             )}
+
+            {showConfirmModal && (
+                <ConfirmBookingModal
+                    booking={showConfirmModal}
+                    onClose={() => setShowConfirmModal(null)}
+                    onConfirm={(b) => {
+                        confirmBooking(b); // 🟢 gọi hàm xác nhận booking
+                        setShowConfirmModal(null);
+                    }}
+                />
+            )}
+
+
 
             {/* Check-in modal (hiển thị đầy đủ thông tin, xác nhận check-in) */}
             {showCheckinModalFor && (
@@ -403,7 +430,7 @@ export default function BookingManagement() {
                     onConfirm={() => {
                         // Chỉ cho phép check-in nếu trạng thái là "Confirmed"
                         if (showCheckinModalFor.status === 'Confirmed') {
-                            patchBookingStatus(showCheckinModalFor.id, "Occupied");
+                            checkinBooking(showCheckinModalFor.id);
                         }
                         setShowCheckinModalFor(null);
                     }}
@@ -416,7 +443,7 @@ export default function BookingManagement() {
                     booking={showCancelModalFor}
                     onClose={() => setShowCancelModalFor(null)}
                     onConfirm={() => {
-                        patchBookingStatus(showCancelModalFor.id, "Canceled");
+                        fetchCancelableBookings(showCancelModalFor.id);
                         setShowCancelModalFor(null);
                     }}
                 />
@@ -497,13 +524,11 @@ function CheckinModal({ booking, onClose, onConfirm }) {
                     </h3>
                     <button onClick={onClose} className="text-slate-500">Đóng</button>
                 </div>
-                console.log("tableNumbers:", booking.tableNumbers);
                 <div className="space-y-2 text-sm text-slate-700 mb-4">
                     <div className="flex items-center gap-3"><User size={14} className="text-slate-400" /> <b>Họ tên:</b> <span>{booking.customerName}</span></div>
                     <div className="flex items-center gap-3"><Phone size={14} className="text-slate-400" /> <b>Số điện thoại:</b> <span>{booking.customerPhone}</span></div>
                     <div className="flex items-center gap-3"><Clock size={14} className="text-slate-400" /> <b>Thời gian:</b> <span>{booking.arriveAt}</span></div>
                     <div className="flex items-center gap-3"><Users size={14} className="text-slate-400" /> <b>Số khách:</b> <span>{booking.numberOfPeople}</span></div>
-                    console.log("tableNumbers:", booking.tableNumbers);
                     <div className="flex items-center gap-3"><MapPin size={14} className="text-slate-400" /> <b>Bàn:</b> <span>{booking.tableNumbers?.join(", ") || "Chưa chọn bàn"}</span></div>
                     <div><b>Yêu cầu đặc biệt:</b> <span className="text-slate-600">{booking.note || "Không"}</span></div>
                 </div>
@@ -552,16 +577,15 @@ function CancelModal({ booking, onClose, onConfirm }) {
    =========================== */
 function CreateBookingModal({ onClose, onCreate }) {
     const [payload, setPayload] = useState({
-        name: "",
-        phone: "",
-        time: "",
+        CustomerName: "",
+        CustomerPhone: "",
         numberOfPeople: 2,
+        ArriveAt: "",
         note: "",
-        tableNumbers: [],
-        status: "Chờ",
+        tableNumbers: []
     });
 
-    const canCreate = payload.name.trim() && payload.phone.trim() && payload.time.trim();
+    const canCreate = payload.CustomerName.trim() && payload.CustomerPhone.trim() && payload.ArriveAt.trim();
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
@@ -574,17 +598,17 @@ function CreateBookingModal({ onClose, onCreate }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <label className="text-sm">
                         <div className="text-slate-600 text-xs">Họ tên</div>
-                        <input className="mt-1 w-full border rounded px-3 py-2" value={payload.name} onChange={(e) => setPayload({ ...payload, name: e.target.value })} />
+                        <input className="mt-1 w-full border rounded px-3 py-2" value={payload.CustomerName} onChange={(e) => setPayload({ ...payload, CustomerName: e.target.value })} />
                     </label>
 
                     <label className="text-sm">
                         <div className="text-slate-600 text-xs">Số điện thoại</div>
-                        <input className="mt-1 w-full border rounded px-3 py-2" value={payload.phone} onChange={(e) => setPayload({ ...payload, phone: e.target.value })} />
+                        <input className="mt-1 w-full border rounded px-3 py-2" value={payload.CustomerPhone} onChange={(e) => setPayload({ ...payload, CustomerPhone: e.target.value })} />
                     </label>
 
                     <label className="text-sm col-span-1 md:col-span-2">
                         <div className="text-slate-600 text-xs">Thời gian</div>
-                        <input type="datetime-local" className="mt-1 w-full border rounded px-3 py-2" value={payload.time} onChange={(e) => setPayload({ ...payload, time: e.target.value })} />
+                        <input type="datetime-local" className="mt-1 w-full border rounded px-3 py-2" value={payload.ArriveAt} onChange={(e) => setPayload({ ...payload, ArriveAt: e.target.value })} />
                     </label>
 
                     <label className="text-sm">
@@ -602,6 +626,58 @@ function CreateBookingModal({ onClose, onCreate }) {
                     <button onClick={onClose} className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Hủy</button>
                     <button onClick={() => canCreate && onCreate(payload)} disabled={!canCreate} className={`px-4 py-2 rounded-lg text-white ${canCreate ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400 cursor-not-allowed'}`}>
                         Tạo đơn
+                    </button>
+                </div>
+            </motion.div>
+        </div>
+    );
+}
+function ConfirmBookingModal({ booking, onClose, onConfirm }) {
+    if (!booking) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+            <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+            >
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                        Xác nhận đặt bàn
+                    </h3>
+                    <button
+                        onClick={onClose}
+                        className="text-slate-500 hover:text-slate-700"
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <p className="text-sm text-gray-600 mb-6">
+                    Bạn có chắc chắn muốn xác nhận đơn đặt bàn của khách{" "}
+                    <span className="font-semibold text-indigo-600">
+                        {booking.customerName}
+                    </span>{" "}
+                    vào lúc{" "}
+                    <span className="font-medium text-gray-700">
+                        {new Date(booking.arriveAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </span>{" "}
+                    không?
+                </p>
+
+                <div className="flex justify-end gap-3">
+                    <button
+                        onClick={onClose}
+                        className="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+                    >
+                        Hủy
+                    </button>
+                    <button
+                        onClick={() => onConfirm(booking)}
+                        className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                    >
+                        Xác nhận
                     </button>
                 </div>
             </motion.div>
