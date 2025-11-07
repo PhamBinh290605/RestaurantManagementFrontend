@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Section from "../../../components/Section";
 
 const Menu = () => {
@@ -12,9 +13,11 @@ const Menu = () => {
     "DoUong-TrangMieng.jpg",
   ];
 
+  const { t } = useTranslation("common");
+
   return (
     <div className="bg-[#f5ebe0]">
-      <Section title="Thực đơn " />
+      <Section title={t("Menu")} />
       <div className="flex items-center justify-center p-6 mt-4">
         <div className="grid grid-cols-2 gap-10 w-[1200px]">
           {menuImages.map((img, i) => (

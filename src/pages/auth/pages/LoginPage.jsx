@@ -32,7 +32,7 @@ const LoginPage = () => {
       if (loggedInUser.isAdmin) {
         navigate(ROUTERS.ADMIN.DASHBOARD);
       } else if (loggedInUser.isStaff) {
-        navigate(ROUTERS.ADMIN.STAFF);
+        navigate(ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS);
       }
     } catch (error) {
       setLoading(false);

@@ -258,6 +258,61 @@ const RegisterShiftPage = () => {
     );
   };
 
+  // handle cancel shift
+  const handleCancelShift = async (assignmentId) => {
+    if (!window.confirm("Are you sure you want to cancel this shift?")) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(
+        `http://localhost:5268/api/v1/shiftAssignment/delete/${user.UserId}/${assignmentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to cancel shift");
+
+      setSubmitMessage({
+        type: "success",
+        message: "Canceled the case successfully!",
+      });
+
+      getAllAssignment();
+    } catch (error) {
+      setSubmitMessage({
+        type: "error",
+        message: "Cancellation failed. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Get registered shift for date
+  const getRegisteredShiftsForDate = () => {
+    if (!selectedDate) return [];
+    const formattedDate = formatDate(selectedDate);
+    return registeredShifts
+      .filter(
+        (s) =>
+          s.workDate.split("T")[0] === formattedDate && isFutureDate(s.workDate)
+      )
+      .map((s) => {
+        const shift = shifts.find((sh) => sh.id === s.shiftId);
+        return {
+          ...s,
+          name: shift?.name || "Unknown Shift",
+          time: shift?.time || "",
+          color: shift?.color || "from-gray-400 to-gray-600",
+        };
+      });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/30 p-6">
       <div className="max-w-5xl mx-auto">
@@ -428,40 +483,113 @@ const RegisterShiftPage = () => {
                 )}
               </div>
 
-              <div className="p-6 space-y-4">
-                {shifts.map((shift) => (
-                  <button
-                    key={shift.id}
-                    onClick={() => toggleShift(shift.id)}
-                    disabled={!selectedDate || isShiftRegistered(shift.id)}
-                    className={`
-                      w-full p-4 rounded-xl font-medium text-sm transition-all duration-300 border-2 shadow-sm
-                      ${
-                        isShiftRegistered(shift.id)
-                          ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
-                          : isShiftSelected(shift.id)
-                          ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
-                          : `bg-white/60 text-slate-700 border-slate-200/60 hover:border-blue-300/60 hover:shadow-md hover:scale-102 ${
-                              !selectedDate
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`
-                      }
-                    `}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="font-semibold">{shift.name}</div>
-                        <div className="text-xs opacity-90 mt-1">
-                          {shift.time}
+              <div className="p-6 space-y-6">
+                {/* Available Shifts */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">
+                    Select new shifts
+                  </h4>
+                  {shifts.map((shift) => {
+                    const isRegistered = isShiftRegistered(shift.id);
+                    const isSelected = isShiftSelected(shift.id);
+
+                    return (
+                      <button
+                        key={shift.id}
+                        onClick={() => toggleShift(shift.id)}
+                        disabled={
+                          !selectedDate ||
+                          !isFutureDate(selectedDate) ||
+                          isRegistered
+                        }
+                        className={` w-full p-4 rounded-xl font-medium text-sm transition-all duration-300 border-2 shadow-sm relative overflow-hidden
+                          ${
+                            isRegistered
+                              ? `bg-gradient-to-r ${shift.color} text-white opacity-70 cursor-not-allowed`
+                              : isSelected
+                              ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
+                              : `bg-white/60 text-slate-700 border-slate-200/60 hover:border-blue-300/60 hover:shadow-md hover:scale-102 ${
+                                  !selectedDate || !isFutureDate(selectedDate)
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`
+                          }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="font-semibold">{shift.name}</div>
+                            <div className="text-xs opacity-90 mt-1">
+                              {shift.time}
+                            </div>
+                          </div>
+                          {isSelected && <CheckCircle className="w-5 h-5" />}
+                          {isRegistered && (
+                            <span className="text-xs bg-white/30 px-2 py-1 rounded-full">
+                              Registered
+                            </span>
+                          )}
                         </div>
-                      </div>
-                      {isShiftSelected(shift.id) && (
-                        <CheckCircle className="w-5 h-5" />
-                      )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Registered Shifts with Cancel Button */}
+                {selectedDate && getRegisteredShiftsForDate().length > 0 && (
+                  <div className="space-y-3 pt-4 border-t border-slate-200">
+                    <h4 className="text-sm font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-600" />
+                      Registered ({getRegisteredShiftsForDate().length})
+                    </h4>
+                    <div className="space-y-2">
+                      {getRegisteredShiftsForDate().map((reg) => (
+                        <div
+                          key={reg.id}
+                          className={`group relative p-3 rounded-lg bg-gradient-to-r ${reg.color} text-white shadow-sm transition-all duration-300 hover:shadow-md`}
+                        >
+                          <div className="flex items-center justify-between pr-10">
+                            <div>
+                              <div className="font-medium text-sm">
+                                {reg.name}
+                              </div>
+                              <div className="text-xs opacity-90">
+                                {reg.time}
+                              </div>
+                            </div>
+                            <div className="text-xs bg-white/20 px-2 py-1 rounded-full">
+                              {formatDate(selectedDate)}
+                            </div>
+                          </div>
+
+                          {/* Cancel Button - Hidden until hover or always visible */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCancelShift(reg.id);
+                            }}
+                            disabled={isSubmitting}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-red-600 hover:bg-red-700 text-white p-1.5 rounded-full shadow-lg hover:scale-110"
+                            title="Cancel shift"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
                     </div>
-                  </button>
-                ))}
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}

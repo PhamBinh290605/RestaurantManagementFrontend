@@ -68,5 +68,31 @@
         "p2": "Cảm ơn quý khách!"
       }
     }
+  },
+  "Menu": "Thực đơn",
+  "Gallery": {
+    "section": "Bộ Sưu Tập Hình Ảnh",
+    "categories": {
+      "exterior": "Ngoại Thât",
+      "food": "Món Ăn",
+      "event": "Sự Kiện",
+      "interior": "Nội Thất"
+    },
+    "images": {
+      "img1": "Không Gian ngoài trời",
+      "img2": "Rau Củ Thượng Hạng",
+      "img3": "Tiệc Cưới Sang Trọng",
+      "img4": "Khu Vực VIP",
+      "img5": "Bàn Ăn",
+      "img6": "Không Gian Ấm Cúng",
+      "img7": "Quầy Bar Đẳng Cấp",
+      "img8": "Không Gian Sang Chảnh",
+      "img9": "Gala Doanh Nghiệp"
+    }
+  },
+  "Contact": {
+    "section": "Liên hệ",
+    "p1": "Liên hệ với chúng tôi",
+    "p2": "Địa chỉ: Số 3 Cầu Giấy, Láng Thượng, Hà Nội"
   }
 }

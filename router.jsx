@@ -18,6 +18,8 @@ import AboutPage from "./src/pages/user/aboutPage";
 import Contact from "./src/pages/user/contact/Index";
 import Album from "./src/pages/user/album";
 import HomePage from "./src/pages/user/homePage";
+import Payment from "./src/pages/admin/payment";
+import PaymentResult from "./src/pages/admin/payment/pages/PaymentResult";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -117,6 +119,10 @@ const RouterCustom = () => {
       path: ROUTERS.ADMIN.STAFF_ATTEND_ASSIGNMENT,
       element: <AttendAssignment />,
     },
+    {
+      path: ROUTERS.ADMIN.PAYMENT,
+      element: <Payment />,
+    },
   ];
 
   return (
@@ -142,6 +148,10 @@ const RouterCustom = () => {
             <Route key={index} path={item.path} element={item.element} />
           ))}
         </Route>
+        <Route
+          path={ROUTERS.RESULT.PAYMENT_RESULT}
+          element={<PaymentResult />}
+        />
         <Route
           path={ROUTERS.NOT_FOUND}
           element={<NotFound url="/" title="GO BACK HOME" />}

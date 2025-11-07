@@ -27,6 +27,10 @@ export const ROUTERS = {
     REPORT: "/admin/report",
     SETTING: "/admin/setting",
     CATEGORY_MANAGEMENT: "/admin/category-management",
+    PAYMENT: "/admin/payment",
+  },
+  RESULT: {
+    PAYMENT_RESULT: "/api/payment/call-back",
   },
   NOT_FOUND: "*",
 };
