@@ -8,15 +8,49 @@ import {
   Edit,
   Trash2,
   Plus,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ROUTERS } from "../../../utils/router";
+import ReactPaginate from "react-paginate";
 
 const StaffPage = () => {
   const [staffData, setStaffData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterUser, setFilterUser] = useState({
+    selectedRoleName: "",
+    selectedStatus: "",
+  });
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const itemsPerPage = 5;
+
+  const handlePageChange = ({ selected }) => {
+    setPage(selected);
+  };
+
+  const filteredStaff = staffData
+    .filter(
+      (staff) =>
+        staff.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        staff.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((staff) => {
+      const matchRole =
+        filterUser.selectedRoleName === "" ||
+        staff.roleName === filterUser.selectedRoleName;
+      const matchStatus =
+        filterUser.selectedStatus === "" ||
+        staff.status === filterUser.selectedStatus;
+      return matchRole && matchStatus;
+    });
+
+  const currentPageItems = filteredStaff.slice(
+    page * itemsPerPage,
+    (page + 1) * itemsPerPage
+  );
 
   useEffect(() => {
     getData();
@@ -46,15 +80,43 @@ const StaffPage = () => {
     }
   };
 
-  const filteredStaff = staffData.filter(
-    (staff) =>
-      staff.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      staff.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const onChangeFilter = (e) => {
+    const { name, value } = e.target;
+    setFilterUser((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setPage(0); // Reset comeback page 1
+  };
+
+  // Delete
+  const handleDelete = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5268/api/v1/users/delete/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.log("Fetch api fail!");
+      }
+
+      const data = await response.json();
+      console.log("Data: ", data);
+      getData();
+    } catch (err) {
+      console.log("Fetch api:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
-      {/* Header */}
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-6">
           <div>
@@ -74,17 +136,50 @@ const StaffPage = () => {
           </button>
         </div>
 
-        {/* Search Bar */}
+        {/* Search and Filter Section */}
         <div className="bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 p-6 mb-8">
-          <div className="relative max-w-2xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search by name or email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-6 py-3 bg-white/50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 placeholder-slate-400"
-            />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative flex-1 max-w-2xl">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="🔍 Search by name or email..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setPage(0); // Reset page 1
+                }}
+                className="w-full pl-12 pr-6 py-3 bg-white/50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 placeholder-slate-400 shadow-sm hover:shadow-md"
+              />
+            </div>
+
+            <div className="relative flex-shrink-0 w-full sm:w-48">
+              <select
+                name="selectedRoleName"
+                value={filterUser.selectedRoleName}
+                onChange={onChangeFilter}
+                className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-slate-700 appearance-none shadow-sm hover:shadow-md"
+              >
+                <option value="">All Roles</option>
+                <option value="Admin">Admin</option>
+                <option value="Staff">Staff</option>
+                <option value="Customer">Customer</option>
+              </select>
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            </div>
+
+            <div className="relative flex-shrink-0 w-full sm:w-48">
+              <select
+                name="selectedStatus"
+                value={filterUser.selectedStatus}
+                onChange={onChangeFilter}
+                className="w-full pl-10 pr-4 py-3 bg-white/50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-none transition-all duration-300 text-slate-700 appearance-none shadow-sm hover:shadow-md"
+              >
+                <option value="">All Statuses</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -125,7 +220,7 @@ const StaffPage = () => {
                       Role
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Status
+                      <span>Status</span>
                     </th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-slate-700 uppercase tracking-wider">
                       Actions
@@ -134,12 +229,11 @@ const StaffPage = () => {
                 </thead>
 
                 <tbody className="divide-y divide-slate-200/50">
-                  {filteredStaff.map((staff, index) => (
+                  {currentPageItems.map((staff, index) => (
                     <tr
                       key={staff.id || index}
                       className="hover:bg-slate-50/50 transition-colors duration-200"
                     >
-                      {/* Cột thông tin - Fixed width */}
                       <td className="px-6 py-4 w-[280px]">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
@@ -156,38 +250,34 @@ const StaffPage = () => {
                         </div>
                       </td>
 
-                      {/* Email - Fixed width */}
                       <td className="px-6 py-4 w-[220px]">
                         <div className="flex items-center gap-3">
                           <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
                           <span className="text-sm text-slate-900 truncate">
-                            {staff.email || "Chưa có email"}
+                            {staff.email || "No email"}
                           </span>
                         </div>
                       </td>
 
-                      {/* Số điện thoại - Fixed width */}
                       <td className="px-6 py-4 w-[160px]">
                         <div className="flex items-center gap-3">
                           <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
                           <span className="text-sm text-slate-900 truncate">
-                            {staff.phone || "Chưa có số"}
+                            {staff.phone || "No Number"}
                           </span>
                         </div>
                       </td>
 
-                      {/* Vai trò - Fixed width */}
                       <td className="px-6 py-4 w-[120px]">
                         <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                          {staff.role || "Nhân viên"}
+                          {staff.roleName || "Undefine"}
                         </span>
                       </td>
 
-                      {/* Trạng thái - Fixed width */}
                       <td className="px-6 py-4 w-[120px]">
                         <span
                           className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border ${
-                            staff.status === "Active"
+                            staff.status === "ACTIVE"
                               ? "bg-green-100 text-green-800 border-green-200"
                               : "bg-slate-100 text-slate-700 border-slate-200"
                           }`}
@@ -196,13 +286,25 @@ const StaffPage = () => {
                         </span>
                       </td>
 
-                      {/* Thao tác - Fixed width */}
                       <td className="px-6 py-4 w-[120px]">
                         <div className="flex justify-end gap-2">
-                          <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg hover:scale-105 transition-all duration-200 flex-shrink-0">
+                          <button
+                            onClick={() =>
+                              navigate(
+                                ROUTERS.ADMIN.STAFF_UPDATE.replace(
+                                  ":id",
+                                  staff.id
+                                )
+                              )
+                            }
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg hover:scale-105 transition-all duration-200 flex-shrink-0"
+                          >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-red-600 hover:bg-red-50 rounded-lg hover:scale-105 transition-all duration-200 flex-shrink-0">
+                          <button
+                            onClick={() => handleDelete(staff.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg hover:scale-105 transition-all duration-200 flex-shrink-0"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -219,21 +321,37 @@ const StaffPage = () => {
             <div className="px-6 py-4 bg-gradient-to-r from-blue-600/5 to-indigo-600/5 border-t border-slate-200/50">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="text-sm text-slate-600">
-                  Hiển thị{" "}
+                  Showing{" "}
+                  <span className="font-semibold">
+                    {currentPageItems.length}
+                  </span>{" "}
+                  of{" "}
                   <span className="font-semibold">{filteredStaff.length}</span>{" "}
-                  nhân viên
+                  employees
                 </div>
-                <div className="flex items-center justify-center sm:justify-end gap-2">
-                  <button className="px-4 py-2 text-sm text-slate-600 bg-white rounded-lg hover:bg-slate-100 transition-colors font-medium">
-                    Trước
-                  </button>
-                  <span className="px-4 py-2 text-sm font-semibold text-slate-900 bg-white rounded-lg shadow-sm">
-                    1
-                  </span>
-                  <button className="px-4 py-2 text-sm text-slate-600 bg-white rounded-lg hover:bg-slate-100 transition-colors font-medium">
-                    Sau
-                  </button>
-                </div>
+                <ReactPaginate
+                  previousLabel={
+                    <span className="flex items-center gap-1">
+                      <ArrowLeft className="w-4 h-4" /> Previous
+                    </span>
+                  }
+                  nextLabel={
+                    <span className="flex items-center gap-1">
+                      Next <ArrowRight className="w-4 h-4" />
+                    </span>
+                  }
+                  pageCount={Math.ceil(filteredStaff.length / itemsPerPage)}
+                  onPageChange={handlePageChange}
+                  containerClassName="flex items-center justify-center gap-2 py-4"
+                  pageClassName="flex items-center"
+                  pageLinkClassName="flex items-center justify-center w-9 h-9 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-500 hover:text-blue-700 transition-all duration-300"
+                  activeLinkClassName="bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-600 font-semibold"
+                  previousClassName="flex items-center"
+                  nextClassName="flex items-center"
+                  previousLinkClassName="flex items-center px-4 py-2 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-500 transition-all duration-300"
+                  nextLinkClassName="flex items-center px-4 py-2 text-sm font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:border-blue-500 transition-all duration-300"
+                  disabledClassName="opacity-50 cursor-not-allowed"
+                />
               </div>
             </div>
           )}

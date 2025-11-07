@@ -32,7 +32,7 @@ const LoginPage = () => {
       if (loggedInUser.isAdmin) {
         navigate(ROUTERS.ADMIN.DASHBOARD);
       } else if (loggedInUser.isStaff) {
-        navigate(ROUTERS.ADMIN.STAFF);
+        navigate(ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS);
       }
     } catch (error) {
       setLoading(false);
@@ -44,7 +44,7 @@ const LoginPage = () => {
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       await loginGoogle(credentialResponse);
-      navigate(ROUTERS.ADMIN.STAFF);
+      navigate(ROUTERS.USER.HOME);
     } catch (error) {
       console.error("Google login error:", error);
       alert("Login failed. Please check your credentials and try again.");
@@ -142,7 +142,7 @@ const LoginPage = () => {
               />
             </div>
           </div>
-          <p className="mt-4 text-sm text-gray-600">
+          {/* <p className="mt-4 text-sm text-gray-600">
             Don't have an account?{" "}
             <a
               href={ROUTERS.AUTH.REGISTER}
@@ -150,7 +150,7 @@ const LoginPage = () => {
             >
               Sign up
             </a>
-          </p>
+          </p> */}
         </div>
         {/* Right Section: Image */}
         <div className="w-full md:w-1/2 h-72 md:h-[450px] lg:h-[620px]">

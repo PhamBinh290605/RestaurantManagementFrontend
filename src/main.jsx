@@ -4,7 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import RouterCustom from "../router";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-
+import "./i18n/i18n.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
