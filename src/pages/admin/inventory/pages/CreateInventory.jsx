@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 import { apiCreateInventory } from "../../../../services/api";
 
-// --- Các component Form con để tái sử dụng ---
+// --- Các component Form con ---
 const FormLabel = ({ htmlFor, children }) => (
   <label
     htmlFor={htmlFor}
@@ -24,7 +24,7 @@ const FormInput = ({ id, name, value, onChange, placeholder, type = "text", requ
     placeholder={placeholder}
     step={step}
     required={required}
-    {...props} // Truyền các props khác như 'disabled'
+    {...props}
     className="w-full px-4 py-2.5 border border-gray-200 rounded-lg shadow-sm bg-gray-50/50
                text-gray-800 placeholder-gray-400
                transition-all duration-200 ease-in-out
@@ -35,27 +35,23 @@ const FormInput = ({ id, name, value, onChange, placeholder, type = "text", requ
 );
 // --- Hết component Form con ---
 
-// --- 1. THAY ĐỔI: Tạo một biến chứa trạng thái ban đầu của form ---
+// --- 1. THAY ĐỔI: Trạng thái ban đầu chỉ cần itemName ---
 const initialFormState = {
-  itemName: "",
-  quantity: 0,
-  unit: "",
-  minThreshold: 0,
+  itemName: "",
 };
 
 export default function CreateInventory() {
-  const navigate = useNavigate(); // Vẫn giữ navigate nếu bạn cần dùng ở chỗ khác
+  const navigate = useNavigate(); 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // --- 2. THAY ĐỔI: Sử dụng biến trạng thái ban đầu ---
+  // --- 2. THAY ĐỔI: Sử dụng state mới ---
   const [formData, setFormData] = useState(initialFormState);
 
-  // Hàm xử lý khi nhập liệu
+  // Hàm xử lý khi nhập liệu (đã đơn giản hóa)
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      // Chuyển đổi giá trị sang số nếu type là 'number'
-      [name]: type === "number" ? parseFloat(value) || 0 : value,
+      [name]: value,
     }));
   };
 
@@ -65,26 +61,24 @@ export default function CreateInventory() {
     setIsSubmitting(true);
     const toastId = toast.loading('Creating new inventory...');
 
+    // --- 3. THAY ĐỔI: Tạo payload đầy đủ để gửi đi ---
+    const payload = {
+      itemName: formData.itemName, // Lấy tên từ form
+      quantity: 1,                 // Gán giá trị mặc định
+      unit: "kg",                  // Gán giá trị mặc định
+      minThreshold: 0              // Gán giá trị mặc định
+    };
+
     try {
-      // 1. Gọi hàm API từ file api.js
-      await apiCreateInventory(formData);
+      // 4. THAY ĐỔI: Gửi payload đã tạo
+      await apiCreateInventory(payload); 
       
-      // 2. Thông báo thành công
       toast.success('Inventory created successfully!', { id: toastId });
-
-      // --- 3. THAY ĐỔI: Reset form về trạng thái ban đầu thay vì chuyển trang ---
-      setFormData(initialFormState);
-
-      /* (Đã vô hiệu hóa đoạn code chuyển trang)
-      setTimeout(() => {
-        navigate('/admin/inventory'); 
-      }, 1000);
-      */
+      setFormData(initialFormState); // Reset form
 
     } catch (error) {
       console.error("Failed to create inventory:", error);
       
-      // Xử lý lỗi (hiển thị lỗi từ backend nếu có)
       let errorMessage = "An unexpected error occurred.";
       if (error.response?.data) {
         if (typeof error.response.data === 'string') {
@@ -98,7 +92,7 @@ export default function CreateInventory() {
       toast.error(errorMessage, { id: toastId });
       
     } finally {
-      setIsSubmitting(false); // Luôn dừng loading
+      setIsSubmitting(false); 
     }
   };
 
@@ -116,12 +110,12 @@ export default function CreateInventory() {
           </h1>
         </div>
 
-        {/* Form */}
+        {/* Form (đã xóa các trường) */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 md:p-10 rounded-xl shadow-xl space-y-6 border border-gray-100"
-        >
-          {/* Tên kho */}
+t>
+          {/* Tên kho (chỉ giữ lại trường này) */}
           <div>
             <FormLabel htmlFor="itemName">Inventory Name</FormLabel>
             <FormInput
@@ -131,64 +125,19 @@ export default function CreateInventory() {
               onChange={handleChange}
               placeholder="e.g., Kho Đồ Khô, Kho Nguyên Liệu..."
               required
-              disabled={isSubmitting} // Vô hiệu hóa khi đang submit
-            />
-          </div>
-
-          {/* Số lượng & Đơn vị */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <FormLabel htmlFor="quantity">Initial Quantity</FormLabel>
-              <FormInput
-                type="number"
-                id="quantity"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                step="0.01"
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-            <div>
-              <FormLabel htmlFor="unit">Unit</FormLabel>
-              <FormInput
-                id="unit"
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                placeholder="e.g., kg, pcs, liter"
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-          </div>
-
-          {/* Ngưỡng tối thiểu */}
-          <div>
-            <FormLabel htmlFor="minThreshold">Minimum Threshold</FormLabel>
-            <FormInput
-              type="number"
-              id="minThreshold"
-              name="minThreshold"
-              value={formData.minThreshold}
-              onChange={handleChange}
-              step="0.01"
-              required
               disabled={isSubmitting}
             />
-            <p className="text-xs text-gray-500 mt-1">
-SỐ lượng tối thiểu để hệ thống cảnh báo bạn nhập hàng.
-            </p>
           </div>
+
+          {/* --- 5. THAY ĐỔI: Đã xóa 2 khối div cho quantity, unit, và minThreshold --- */}
 
           {/* Nút Submit */}
           <div className="flex justify-end pt-4 border-t border-gray-100">
             <button
               type="submit"
-              disabled={isSubmitting} // Nút bị vô hiệu hóa khi đang submit
+              disabled={isSubmitting}
               className="px-8 py-3 flex items-center justify-center gap-2.5 bg-[#4A7B7A] text-white font-semibold rounded-lg shadow-md 
-          C            hover:bg-[#3A6B6A] hover:shadow-lg
+                         hover:bg-[#3A6B6A] hover:shadow-lg
                          focus:outline-none focus:ring-2 focus:ring-[#4A7B7A] focus:ring-offset-2 
                          transition-all duration-300 ease-in-out
                          disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none"
@@ -198,7 +147,7 @@ SỐ lượng tối thiểu để hệ thống cảnh báo bạn nhập hàng.
               ) : (
                 <Save size={20} />
               )}
-              <span>
+          <span>
                 {isSubmitting ? "Saving..." : "Create Inventory"}
               </span>
             </button>
