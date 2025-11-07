@@ -6,60 +6,62 @@ import { X, ZoomIn } from "lucide-react";
 const Album = () => {
   const { t } = useTranslation("common");
 
+  const basePath = "/src/assets/images/gallery/";
+
   const galleryImages = [
     {
       id: 1,
       title: t("Gallery.images.img1"),
       category: "exterior",
-      src: "/src/assets/images/gallery/unnamed.jpg",
+      src: `${basePath}unnamed.jpg`,
     },
     {
       id: 2,
       title: t("Gallery.images.img2"),
       category: "food",
-      src: "/src/assets/images/gallery/img-2.jpg",
+      src: `${basePath}img-2.jpg`,
     },
     {
       id: 3,
       title: t("Gallery.images.img3"),
       category: "event",
-      src: "/src/assets/images/gallery/img-3.jpg",
+      src: `${basePath}img-3.jpg`,
     },
     {
       id: 4,
       title: t("Gallery.images.img4"),
       category: "event",
-      src: "/src/assets/images/gallery/img-4.jpg",
+      src: `${basePath}img-4.jpg`,
     },
     {
       id: 5,
       title: t("Gallery.images.img5"),
       category: "interior",
-      src: "/src/assets/images/gallery/img-5.jpg",
+      src: `${basePath}img-5.jpg`,
     },
     {
       id: 6,
       title: t("Gallery.images.img6"),
       category: "interior",
-      src: "/src/assets/images/gallery/img-6.jpg",
+      src: `${basePath}img-6.jpg`,
     },
     {
       id: 7,
       title: t("Gallery.images.img7"),
       category: "interior",
-      src: "/src/assets/images/gallery/img-7.jpg",
+      src: `${basePath}img-7.jpg`,
     },
     {
       id: 8,
       title: t("Gallery.images.img8"),
       category: "interior",
-      src: "/src/assets/images/gallery/img-8.jpg",
+      src: `${basePath}img-8.jpg`,
     },
     {
       id: 9,
       title: t("Gallery.images.img9"),
       category: "interior",
-      src: "/src/assets/images/gallery/img-9.jpg",
+      src: `${basePath}img-9.jpg`,
     },
   ];
 
