@@ -10,6 +10,16 @@ import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
 import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
+import MenuPage from "./src/pages/admin/menu";
+import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
+import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
+import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
+import OrderManagerPage from "./src/pages/admin/order-manager";
+import OrderFeature from "./src/pages/admin/order";
+import TableSelectionPage from "./src/pages/admin/order/pages/TableSelectionPage";
+import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
+import ReservationPage from "./src/pages/admin/Reservation";
+import ManageTables from "./src/pages/admin/table";
 import UpdateUser from "./src/pages/admin/staff/pages/UpdateUser";
 import AttendAssignment from "./src/pages/admin/staff/pages/AttendAssignment";
 import Menu from "./src/pages/user/menu";
@@ -64,15 +74,43 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.MENU_MANAGEMENT,
-      element: <div>Menu Management</div>,
+      element: <MenuPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.ADD_MENU_ITEM,
+      element: <AddMenuItemPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.EDIT_MENU_ITEM,
+      element: <EditMenuItemPage />,
     },
     {
       path: ROUTERS.ADMIN.ORDER,
-      element: <div>Order</div>,
+      element: <TableSelectionPage />,
     },
     {
-      path: ROUTERS.ADMIN.TABLE,
-      element: <div>Table</div>,
+      path: ROUTERS.ADMIN.ORDER_MANAGER,
+      element: <OrderManagerPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.ORDER_DETAIL,
+      element: <OrderDetailPage />,
+    },
+    // {
+    //   path: ROUTERS.ADMIN.TABLE,
+    //   element: <div>Table</div>,
+    // },
+    {
+      path: ROUTERS.ADMIN.MANAGE_TABLES,
+      element: <ManageTables />,
+    },
+    // {
+    //   path: ROUTERS.ADMIN.SERVING_TABLES,
+    //   element: <ServingTablesPage />,
+    // },
+    {
+      path: ROUTERS.ADMIN.RESERVATION,
+      element: <ReservationPage />,
     },
     {
       path: ROUTERS.ADMIN.INVENTORY,
@@ -108,7 +146,7 @@ const RouterCustom = () => {
     },
     {
       path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
-      element: <div>Category Management</div>,
+      element: <CategoryManager />,
     },
     {
       path: ROUTERS.ADMIN.STAFF_SHIFT_ASSIGNMENTS,
