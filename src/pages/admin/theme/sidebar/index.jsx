@@ -14,6 +14,8 @@ import {
   UserCheck,
   UserX,
   Salad, 
+  CalendarArrowDown,
+  HandPlatter ,
 } from "lucide-react";
 import { ROUTERS } from "../../../../utils/router";
 import { useAuth } from "../../../../components/context/authContext";
@@ -68,17 +70,37 @@ const Sidebar = ({ collapsed }) => {
         {
           name: "Order",
           path: ROUTERS.ADMIN.ORDER,
-          icon: <Table2 size={20} />,
+          icon: <HandPlatter size={20} />,
         },
         {
           name: "Table",
-          path: ROUTERS.ADMIN.TABLE,
+          path: ROUTERS.ADMIN.MANAGE_TABLES,
           icon: <Table2 size={20} />,
         },
+        // {
+        //   name: "Tables",
+        //   icon: <Utensils size={20} />,
+        //   // path: ROUTERS.ADMIN.MENU_MANAGEMENT,
+        //   submenu: true,
+        //   children: [
+        //     {
+        //       name: "Manage Tables",
+        //       path: ROUTERS.ADMIN.MANAGE_TABLES,
+        //       icon: <Utensils size={20} />,
+        //       active: location.pathname.includes(ROUTERS.ADMIN.MANAGE_TABLES),
+        //     },
+        //     {
+        //       name: "Serving Tables",
+        //       path: ROUTERS.ADMIN.SERVING_TABLES,
+        //       icon: <Salad size={20} />,
+        //       active: location.pathname.includes(ROUTERS.ADMIN.SERVING_TABLES),
+        //     },
+        //   ],
+        // },
         {
-          name: "Réservation",
+          name: "Booking",
           path: ROUTERS.ADMIN.RESERVATION,
-          icon: <Table2 size={20} />,
+          icon: <CalendarArrowDown size={20} />,
         },
         {
           name: "Inventory",

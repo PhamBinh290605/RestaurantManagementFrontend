@@ -20,6 +20,7 @@ import OrderFeature from "./src/pages/admin/order";
 import TableSelectionPage from "./src/pages/admin/order/pages/TableSelectionPage";
 import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
 import ReservationPage from "./src/pages/admin/Reservation";
+import ManageTables from "./src/pages/admin/table";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -71,10 +72,18 @@ const RouterCustom = () => {
       path: ROUTERS.ADMIN.ORDER_DETAIL,
       element: <OrderDetailPage />,
     },
+    // {
+    //   path: ROUTERS.ADMIN.TABLE,
+    //   element: <div>Table</div>,
+    // },
     {
-      path: ROUTERS.ADMIN.TABLE,
-      element: <div>Table</div>,
+      path: ROUTERS.ADMIN.MANAGE_TABLES,
+      element: <ManageTables />,
     },
+    // {
+    //   path: ROUTERS.ADMIN.SERVING_TABLES,
+    //   element: <ServingTablesPage />,
+    // },
     {
       path: ROUTERS.ADMIN.RESERVATION,
       element: <ReservationPage />,
