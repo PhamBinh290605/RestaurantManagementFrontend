@@ -23,6 +23,9 @@ export const ROUTERS = {
     MANAGE_TABLES: "/admin/table/manage",
     // SERVING_TABLES: "/admin/table/serving",
     INVENTORY: "/admin/inventory",
+    INVENTORY_CREATE: "/admin/inventory/create",
+    INVENTORY_ADD_ITEM: "/admin/inventory/add-item",
+    INVENTORY_LIST: "/admin/inventory/list",
     STAFF: "/admin/staffs",
     STAFF_UPDATE: "/admin/staff/update/:id",
     STAFF_ADD: "/admin/staff/addNew",
@@ -33,6 +36,10 @@ export const ROUTERS = {
     REPORT: "/admin/report",
     SETTING: "/admin/setting",
     CATEGORY_MANAGEMENT: "/admin/category-management",
+    PAYMENT: "/admin/payment",
+  },
+  RESULT: {
+    PAYMENT_RESULT: "/api/payment/call-back",
   },
   NOT_FOUND: "*",
 };

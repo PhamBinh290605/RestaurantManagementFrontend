@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import api from "../../../../api";
 
 const OrderManagerPage = () => {

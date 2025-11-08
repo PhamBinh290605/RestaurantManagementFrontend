@@ -68,5 +68,31 @@
         "p2": "Thank you!"
       }
     }
+  },
+  "Menu": "Menu",
+  "Gallery": {
+    "section": "Image Gallery",
+    "categories": {
+      "exterior": "exterior",
+      "food": "Dishes",
+      "event": "Events",
+      "interior": "Interior"
+    },
+    "images": {
+      "img1": "Outdoor Space",
+      "img2": "Premium Vegetables",
+      "img3": "Luxury Wedding Party",
+      "img4": "VIP Area",
+      "img5": "Dining Table",
+      "img6": "Cozy Space",
+      "img7": "Luxury Bar",
+      "img8": "Elegant Space",
+      "img9": "Corporate Gala"
+    }
+  },
+  "Contact": {
+    "section": "Contact",
+    "p1": "Get in touch with us",
+    "p2": "Address: No. 3 Cau Giay, Lang Thuong, Hanoi"
   }
 }

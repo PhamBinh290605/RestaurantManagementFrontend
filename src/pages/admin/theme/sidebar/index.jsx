@@ -88,7 +88,7 @@ const Sidebar = ({ collapsed }) => {
         //       path: ROUTERS.ADMIN.MANAGE_TABLES,
         //       icon: <Utensils size={20} />,
         //       active: location.pathname.includes(ROUTERS.ADMIN.MANAGE_TABLES),
-        //     },
+        //     }, 
         //     {
         //       name: "Serving Tables",
         //       path: ROUTERS.ADMIN.SERVING_TABLES,
@@ -104,8 +104,28 @@ const Sidebar = ({ collapsed }) => {
         },
         {
           name: "Inventory",
-          path: ROUTERS.ADMIN.INVENTORY,
-          icon: <Boxes size={20} />,
+            icon: <Boxes size={20} />, // Icon chính cho mục cha
+            submenu: true, // Đánh dấu đây là một submenu
+            children: [ // Thêm các mục con
+              {
+                name: "List Inventory", // Đây là link "Inventory" gốc
+              path: ROUTERS.ADMIN.INVENTORY_LIST,
+              icon: <Boxes size={16} />, // Dùng icon nhỏ hơn cho mục con
+                active: location.pathname.includes("/inventory/list"),
+              },
+              {
+                name: "Create Inventory",
+                path: ROUTERS.ADMIN.INVENTORY_CREATE, //* Xem lưu ý bên dưới
+                icon: <Archive size={16} />, // Tận dụng icon đã import
+                active: location.pathname.includes("/inventory/create"), //* Xem lưu ý bên dưới
+              },
+              {
+                name: "Add Item",
+                path: ROUTERS.ADMIN.INVENTORY_ADD_ITEM, //* Xem lưu ý bên dưới
+                icon: <UserCheck size={16} />, // Tận dụng icon "thêm mới"
+                active: location.pathname.includes("/inventory/add-item"), //* Xem lưu ý bên dưới
+              },
+            ],
         },
         // STAFF SUBMENU
         {
@@ -149,6 +169,7 @@ const Sidebar = ({ collapsed }) => {
           path: ROUTERS.ADMIN.SETTING,
           icon: <Settings size={20} />,
         },
+          
       ]
       : user.isStaff
         ? [
@@ -159,8 +180,28 @@ const Sidebar = ({ collapsed }) => {
           },
           {
             name: "Inventory",
-            path: ROUTERS.ADMIN.INVENTORY,
-            icon: <Boxes size={20} />,
+            icon: <Boxes size={20} />, // Icon chính cho mục cha
+            submenu: true, // Đánh dấu đây là một submenu
+            children: [ // Thêm các mục con
+              {
+                name: "List Inventory", // Đây là link "Inventory" gốc
+                path: ROUTERS.ADMIN.INVENTORY,
+                icon: <Boxes size={16} />, // Dùng icon nhỏ hơn cho mục con
+                active: location.pathname === ROUTERS.ADMIN.INVENTORY,
+              },
+              {
+                name: "Create Inventory",
+                path: ROUTERS.ADMIN.INVENTORY_CREATE, //* Xem lưu ý bên dưới
+                icon: <Archive size={16} />, // Tận dụng icon đã import
+                active: location.pathname.includes("/inventory/create"), //* Xem lưu ý bên dưới
+              },
+              {
+                name: "Add Item",
+                path: ROUTERS.ADMIN.INVENTORY_ADD_ITEM, //* Xem lưu ý bên dưới
+                icon: <UserCheck size={16} />, // Tận dụng icon "thêm mới"
+                active: location.pathname.includes("/inventory/add-item"), //* Xem lưu ý bên dưới
+              },
+            ],
           },
           {
             name: "Staff",

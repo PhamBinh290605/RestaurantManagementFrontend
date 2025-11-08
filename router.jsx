@@ -23,11 +23,15 @@ import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
 import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
 import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
 import OrderManagerPage from "./src/pages/admin/order-manager";
-import OrderFeature from "./src/pages/admin/order";
 import TableSelectionPage from "./src/pages/admin/order/pages/TableSelectionPage";
 import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
 import ReservationPage from "./src/pages/admin/Reservation";
 import ManageTables from "./src/pages/admin/table";
+import Payment from "./src/pages/admin/payment";
+import PaymentResult from "./src/pages/admin/payment/pages/PaymentResult";
+import CreateInventory from "./src/pages/admin/inventory/pages/CreateInventory";
+import AddItemInventory from "./src/pages/admin/inventory/pages/AddItemInventory";
+import ListInventory from "./src/pages/admin/inventory/pages/ListInventory";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -155,6 +159,20 @@ const RouterCustom = () => {
       path: ROUTERS.ADMIN.STAFF_ATTEND_ASSIGNMENT,
       element: <AttendAssignment />,
     },
+    {
+      path: ROUTERS.ADMIN.PAYMENT,
+      element: <Payment />,
+      path: ROUTERS.ADMIN.INVENTORY_CREATE,
+      element: <CreateInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_ADD_ITEM,
+      element: <AddItemInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_LIST,
+      element: <ListInventory />,
+    },
   ];
 
   return (
@@ -180,6 +198,10 @@ const RouterCustom = () => {
             <Route key={index} path={item.path} element={item.element} />
           ))}
         </Route>
+        <Route
+          path={ROUTERS.RESULT.PAYMENT_RESULT}
+          element={<PaymentResult />}
+        />
         <Route
           path={ROUTERS.NOT_FOUND}
           element={<NotFound url="/" title="GO BACK HOME" />}
