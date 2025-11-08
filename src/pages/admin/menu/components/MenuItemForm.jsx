@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ImageUploader from './ImageUploader';
-import { toast } from 'sonner';
 import { NotebookText, Settings, Save, XCircle } from 'lucide-react';
 
 const Label = ({ htmlFor, children }) => (

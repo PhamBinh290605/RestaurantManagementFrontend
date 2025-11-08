@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { ROUTERS } from "./src/utils/router";
 import LoginPage from "./src/pages/auth/pages/LoginPage";
-import RegisterPage from "./src/pages/auth/pages/Register";
 import UserLayout from "./src/pages/user/theme/userLayout";
 import AdminLayout from "./src/pages/admin/theme/adminLayout";
 import { AuthProvider } from "./src/components/context/authContext";
@@ -11,16 +10,28 @@ import StaffPage from "./src/pages/admin/staff";
 import AddUser from "./src/pages/admin/staff/pages/AddUser";
 import ShiftAssignmentPage from "./src/pages/admin/staff/pages/ShiftAssignment";
 import RegisterShiftPage from "./src/pages/admin/staff/pages/RegisterShiftPage";
+import UpdateUser from "./src/pages/admin/staff/pages/UpdateUser";
+import AttendAssignment from "./src/pages/admin/staff/pages/AttendAssignment";
+import Menu from "./src/pages/user/menu";
+import Reservation from "./src/pages/user/Reservation";
+import AboutPage from "./src/pages/user/aboutPage";
+import Contact from "./src/pages/user/contact/Index";
+import Album from "./src/pages/user/album";
+import HomePage from "./src/pages/user/homePage";
 import MenuPage from "./src/pages/admin/menu";
 import AddMenuItemPage from "./src/pages/admin/menu/pages/AddMenuItem";
 import EditMenuItemPage from "./src/pages/admin/menu/pages/EditFood";
 import CategoryManager from "./src/pages/admin/menu/pages/CategoryManager";
 import OrderManagerPage from "./src/pages/admin/order-manager";
-import OrderFeature from "./src/pages/admin/order";
 import TableSelectionPage from "./src/pages/admin/order/pages/TableSelectionPage";
 import OrderDetailPage from "./src/pages/admin/order/pages/OrderDetail";
 import ReservationPage from "./src/pages/admin/Reservation";
 import ManageTables from "./src/pages/admin/table";
+import Payment from "./src/pages/admin/payment";
+import PaymentResult from "./src/pages/admin/payment/pages/PaymentResult";
+import CreateInventory from "./src/pages/admin/inventory/pages/CreateInventory";
+import AddItemInventory from "./src/pages/admin/inventory/pages/AddItemInventory";
+import ListInventory from "./src/pages/admin/inventory/pages/ListInventory";
 
 const RouterCustom = () => {
   const authRoute = [
@@ -28,19 +39,31 @@ const RouterCustom = () => {
       path: ROUTERS.AUTH.LOGIN,
       element: <LoginPage />,
     },
-    {
-      path: ROUTERS.AUTH.REGISTER,
-      element: <RegisterPage />,
-    },
   ];
   const userRouters = [
     {
       path: ROUTERS.USER.HOME,
-      element: <div>Hello</div>,
+      element: <HomePage />,
     },
     {
       path: ROUTERS.USER.ABOUT,
-      element: <div>Hiii</div>,
+      element: <AboutPage />,
+    },
+    {
+      path: ROUTERS.USER.MENU,
+      element: <Menu />,
+    },
+    {
+      path: ROUTERS.USER.RESERVATION,
+      element: <Reservation />,
+    },
+    {
+      path: ROUTERS.USER.ALBUM,
+      element: <Album />,
+    },
+    {
+      path: ROUTERS.USER.CONTACT,
+      element: <Contact />,
     },
   ];
   const adminRouters = [
@@ -109,6 +132,18 @@ const RouterCustom = () => {
       element: <AddUser />,
     },
     {
+      path: ROUTERS.ADMIN.STAFF_ADD,
+      element: <AddUser />,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_DELETED,
+      element: <div>Hello, this is page deleted user!</div>,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_UPDATE,
+      element: <UpdateUser />,
+    },
+    {
       path: ROUTERS.ADMIN.CATEGORY_MANAGEMENT,
       element: <CategoryManager />,
     },
@@ -119,6 +154,24 @@ const RouterCustom = () => {
     {
       path: ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS,
       element: <RegisterShiftPage />,
+    },
+    {
+      path: ROUTERS.ADMIN.STAFF_ATTEND_ASSIGNMENT,
+      element: <AttendAssignment />,
+    },
+    {
+      path: ROUTERS.ADMIN.PAYMENT,
+      element: <Payment />,
+      path: ROUTERS.ADMIN.INVENTORY_CREATE,
+      element: <CreateInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_ADD_ITEM,
+      element: <AddItemInventory />,
+    },
+    {
+      path: ROUTERS.ADMIN.INVENTORY_LIST,
+      element: <ListInventory />,
     },
   ];
 
@@ -145,6 +198,10 @@ const RouterCustom = () => {
             <Route key={index} path={item.path} element={item.element} />
           ))}
         </Route>
+        <Route
+          path={ROUTERS.RESULT.PAYMENT_RESULT}
+          element={<PaymentResult />}
+        />
         <Route
           path={ROUTERS.NOT_FOUND}
           element={<NotFound url="/" title="GO BACK HOME" />}

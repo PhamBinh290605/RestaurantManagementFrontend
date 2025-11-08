@@ -12,13 +12,13 @@ import HeaderAssignmentShift from "../components/HeaderAssignmentShift";
 const ShiftAssignmentPage = () => {
   const [shifts, setShifts] = useState([]);
   const [staffList, setStaffList] = useState([]);
-  const [selectedStaff, setSelectedStaff] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [loading, setLoading] = useState(true);
+  const [registeredShifts, setRegisteredShifts] = useState([]);
 
   // Mock shifts
   useEffect(() => {
@@ -45,7 +45,8 @@ const ShiftAssignmentPage = () => {
     setShifts(mockShifts);
   }, []);
 
-  const getEmployee = async () => {
+  // Get all staff assignment
+  const getStaffs = async () => {
     try {
       setLoading(true);
       const response = await fetch("http://localhost:5268/api/v1/users", {
@@ -67,6 +68,7 @@ const ShiftAssignmentPage = () => {
         displayName: staff.fullName || staff.email || "Unknown User",
       }));
       setStaffList(staffWithAvatar);
+      // console.log("Info Staff: ", staffWithAvatar);
     } catch (err) {
       console.error("Fetch API fail:", err);
     } finally {
@@ -75,10 +77,40 @@ const ShiftAssignmentPage = () => {
   };
 
   useEffect(() => {
-    getEmployee();
+    getStaffs();
   }, []);
 
-  // 🔥 DATE FUNCTIONS (GIỮ NGUYÊN)
+  // Get assignment
+  useEffect(() => {
+    getAllAssignment();
+  }, []);
+
+  const getAllAssignment = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5268/api/v1/shiftAssignment/getAll`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.log("Fail to fetch api");
+      }
+
+      const data = await response.json();
+      setRegisteredShifts(data.result);
+
+      // console.log("Data", data);
+    } catch (err) {
+      console.log("Errol", err);
+    }
+  };
+
   const getWeekStart = (date) => {
     const d = new Date(date);
     const day = d.getDay();
@@ -106,6 +138,8 @@ const ShiftAssignmentPage = () => {
         return `${day}/${month}`;
       case "dd/MM/yyyy":
         return `${day}/${month}/${year}`;
+      case "yyyy-MM-dd HH:mm:ss":
+        return `${year}-${month}-${day} 00:00:00`;
       case "MMM yyyy":
         return `${d.toLocaleDateString("en-US", { month: "short" })} ${year}`;
       case "EEE":
@@ -145,33 +179,14 @@ const ShiftAssignmentPage = () => {
     staff.displayName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const isStaffSelected = (staffId, dayIndex, shiftId) => {
-    return selectedStaff.some(
-      (s) =>
-        s.staffId === staffId && s.day === dayIndex && s.shiftId === shiftId
-    );
-  };
-
-  const toggleShift = (staffId, dayIndex, shiftId) => {
-    const existing = selectedStaff.find(
-      (s) =>
-        s.staffId === staffId && s.day === dayIndex && s.shiftId === shiftId
-    );
-
-    if (existing) {
-      setSelectedStaff((prev) => prev.filter((s) => s.id !== existing.id));
-    } else {
-      setSelectedStaff((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          staffId,
-          day: dayIndex,
-          shiftId,
-          date: formatDate(weekDays[dayIndex], "yyyy-MM-dd"),
-        },
-      ]);
-    }
+  const isShiftRegistered = (staffId, day, shiftId) => {
+    const targetDate = new Date(day).toISOString().split("T")[0];
+    return registeredShifts.some((s) => {
+      const workDate = new Date(s.workDate).toISOString().split("T")[0];
+      return (
+        s.userId === staffId && s.shiftId === shiftId && workDate === targetDate
+      );
+    });
   };
 
   const moveWeek = (direction) => {
@@ -222,7 +237,7 @@ const ShiftAssignmentPage = () => {
           formatDate={formatDate}
         />
 
-        {/* Calendar Popup - GIỮ NGUYÊN */}
+        {/* Calendar Popup */}
         {showCalendar && (
           <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
@@ -373,90 +388,82 @@ const ShiftAssignmentPage = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredStaff.map((staff) => (
-                    <tr
-                      key={staff.id}
-                      className="hover:bg-slate-50/50 transition-colors duration-200"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
-                            {staff.avatar}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <span className="font-medium text-sm text-slate-900 block truncate max-w-[140px]">
-                              {staff.displayName}
-                            </span>
-                            <span className="text-xs text-slate-500 block truncate">
-                              {staff.email}
-                            </span>
-                          </div>
-                        </div>
-                      </td>
-                      {weekDays.map((day, dayIndex) => (
-                        <td key={dayIndex} className="px-1 py-4">
-                          <div className="space-y-2">
-                            {shifts.map((shift) => (
-                              <button
-                                key={shift.id}
-                                onClick={() =>
-                                  toggleShift(staff.id, dayIndex, shift.id)
-                                }
-                                className={`
-                                  w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-300 border-2
-                                  ${
-                                    isStaffSelected(
-                                      staff.id,
-                                      dayIndex,
-                                      shift.id
-                                    )
-                                      ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
-                                      : "bg-white/60 hover:bg-white/80 text-slate-700 border-slate-200/60 hover:border-slate-300/80 hover:shadow-sm hover:scale-102"
-                                  }
-                                `}
-                              >
-                                {shift.name}
-                              </button>
-                            ))}
+                  filteredStaff
+                    .filter((staff) => staff.roleName === "Staff")
+                    .map((staff) => (
+                      <tr
+                        key={staff.id}
+                        className="hover:bg-slate-50/50 transition-colors duration-200"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-sm">
+                              {staff.avatar}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <span className="font-medium text-sm text-slate-900 block truncate max-w-[140px]">
+                                {staff.displayName}
+                              </span>
+                              <span className="text-xs text-slate-500 block truncate">
+                                {staff.email}
+                              </span>
+                            </div>
                           </div>
                         </td>
-                      ))}
-                    </tr>
-                  ))
+                        {weekDays.map((day, dayIndex) => (
+                          <td key={dayIndex} className="px-1 py-4">
+                            <div className="space-y-2">
+                              {shifts.map((shift) => (
+                                <button
+                                  key={shift.id}
+                                  className={`
+            w-full px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-300 border-2
+            ${
+              isShiftRegistered(staff.id, day, shift.id)
+                ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
+                : "bg-white/60 hover:bg-white/80 text-slate-700 border-slate-200/60 hover:border-slate-300/80 hover:shadow-sm hover:scale-102"
+            }
+          `}
+                                >
+                                  {shift.name}
+                                </button>
+                              ))}
+                            </div>
+                          </td>
+                        ))}
+                      </tr>
+                    ))
                 )}
               </tbody>
             </table>
           </div>
 
           {/* Summary */}
-          {selectedStaff.length > 0 && (
-            <div className="px-6 py-6 bg-gradient-to-r from-green-50/60 to-blue-50/60 border-t border-slate-200/50">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="flex items-center gap-4 p-4 bg-white/70 rounded-lg shadow-sm border border-green-200/60">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Registered Shifts
-                    </p>
-                    <p className="text-xl font-bold text-slate-900">
-                      {selectedStaff.length}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4 p-4 bg-white/70 rounded-lg shadow-sm border border-blue-200/60">
-                  <Users className="w-6 h-6 text-blue-600" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Employees
-                    </p>
-                    <p className="text-xl font-bold text-slate-900">
-                      {filteredStaff.length}
-                    </p>
-                  </div>
+          <div className="px-6 py-6 bg-gradient-to-r from-green-50/60 to-blue-50/60 border-t border-slate-200/50">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="flex items-center gap-4 p-4 bg-white/70 rounded-lg shadow-sm border border-green-200/60">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-slate-600">
+                    Shifts This Week
+                  </p>
+                  <p className="text-xl font-bold text-slate-900">
+                    {
+                      registeredShifts.filter((s) => {
+                        const workDate = new Date(s.workDate)
+                          .toISOString()
+                          .split("T")[0];
+                        const weekDates = weekDays.map(
+                          (d) => new Date(d).toISOString().split("T")[0]
+                        );
+                        return weekDates.includes(workDate);
+                      }).length
+                    }
+                  </p>
                 </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>

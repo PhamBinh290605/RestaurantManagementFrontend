@@ -12,6 +12,7 @@ const ProtectedRoute = ({ children }) => {
     ROUTERS.ADMIN.INVENTORY,
     ROUTERS.ADMIN.STAFF,
     ROUTERS.ADMIN.STAFF_REGISTER_SHIFTS,
+    ROUTERS.ADMIN.STAFF_ATTEND_ASSIGNMENT,
     ROUTERS.ADMIN.SETTING,
   ];
   if (user.isAdmin) {
