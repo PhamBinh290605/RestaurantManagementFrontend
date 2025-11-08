@@ -3,7 +3,7 @@ import { Tag, Clock, Gift } from "lucide-react";
 const promotions = [
   {
     id: 1,
-    image: "/src/assets/images/promo-1.jpg",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
     title: "Giảm 20% cho khách hàng mới",
     description:
       "Tận hưởng ưu đãi 20% cho hóa đơn đầu tiên của bạn tại Vị An. Áp dụng cho tất cả món ăn trong menu.",
@@ -11,7 +11,7 @@ const promotions = [
   },
   {
     id: 2,
-    image: "/src/assets/images/promo-2.jpg",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
     title: "Combo trưa chỉ 99.000đ",
     description:
       "Thưởng thức bữa trưa trọn vị với combo đặc biệt gồm 1 món chính, canh và tráng miệng.",
@@ -19,7 +19,7 @@ const promotions = [
   },
   {
     id: 3,
-    image: "/src/assets/images/promo-3.jpg",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
     title: "Tặng món tráng miệng khi đặt bàn online",
     description:
       "Đặt bàn trước qua website, bạn sẽ được tặng 1 món tráng miệng miễn phí khi đến dùng bữa.",
