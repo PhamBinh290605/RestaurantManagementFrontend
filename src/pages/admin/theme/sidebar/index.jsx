@@ -174,10 +174,10 @@ const Sidebar = ({ collapsed }) => {
                 active: location.pathname.includes("staff/register-shift"),
               },
               {
-                name: "Đã xóa",
-                path: `${ROUTERS.ADMIN.STAFF}/deleted`,
+                name: "Check in/out",
+                path: ROUTERS.ADMIN.STAFF_ATTEND_ASSIGNMENT,
                 icon: <UserX size={16} />,
-                active: location.pathname.includes("/staff/deleted"),
+                active: location.pathname.includes("/staff/attend-assignment"),
               },
             ],
           },

@@ -11,6 +11,7 @@ import {
   Save,
   AlertCircle,
 } from "lucide-react";
+import { useAuth } from "../../../../components/context/authContext";
 
 const RegisterShiftPage = () => {
   const [shifts, setShifts] = useState([]);
@@ -19,8 +20,10 @@ const RegisterShiftPage = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState(null);
+  const { user } = useAuth();
+  const [registeredShifts, setRegisteredShifts] = useState([]);
 
-  // Mock shifts (có thể fetch từ API)
+  // Mock shifts
   useEffect(() => {
     const mockShifts = [
       {
@@ -45,13 +48,42 @@ const RegisterShiftPage = () => {
     setShifts(mockShifts);
   }, []);
 
-  //  CHECK IF DATE IS FUTURE (KHÔNG PHẢI QUÁ KHỨ)
+  // Get all assignment
+  useEffect(() => {
+    getAllAssignment();
+  }, []);
+
+  const getAllAssignment = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5268/api/v1/shiftAssignment/getAll/${user.UserId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        console.log("Fail to fetch api");
+      }
+
+      const data = await response.json();
+      setRegisteredShifts(data.result);
+    } catch (err) {
+      console.log("Error", err);
+    }
+  };
+
+  // CHECK IF DATE IS FUTURE
   const isFutureDate = (date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time để so sánh ngày
+    today.setHours(0, 0, 0, 0);
     const selected = new Date(date);
     selected.setHours(0, 0, 0, 0);
-    return selected >= today;
+    return selected > today;
   };
 
   // CUSTOM DATE FUNCTIONS
@@ -96,6 +128,14 @@ const RegisterShiftPage = () => {
     return `${year}-${month}-${day}`;
   };
 
+  // count shift
+  const getRegisteredShiftCount = (date) => {
+    const formattedDate = formatDate(date);
+    return registeredShifts.filter(
+      (s) => s.workDate.split("T")[0] === formattedDate
+    ).length;
+  };
+
   const monthDays = getMonthDays(currentMonth);
 
   // TOGGLE SHIFT
@@ -113,7 +153,6 @@ const RegisterShiftPage = () => {
         type: "error",
         message: "Cannot register shifts for past dates!",
       });
-
       return;
     }
 
@@ -151,20 +190,20 @@ const RegisterShiftPage = () => {
     setSubmitMessage(null);
 
     try {
+      const bodyData = selectedShifts.map((item) => ({
+        ShiftId: item.shiftId,
+        DateTime: item.date,
+      }));
+
       const response = await fetch(
-        "http://localhost:5268/api/v1/staff/shifts/register",
+        `http://localhost:5268/api/v1/shiftAssignment/create/${user.UserId}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            shifts: selectedShifts.map((s) => ({
-              shiftId: s.shiftId,
-              date: s.date,
-            })),
-          }),
+          body: JSON.stringify(bodyData),
         }
       );
 
@@ -173,12 +212,14 @@ const RegisterShiftPage = () => {
       }
 
       const result = await response.json();
+
       setSubmitMessage({
         type: "success",
         message: `Successfully registered ${selectedShifts.length} shift(s)!`,
       });
-      setSelectedShifts([]); // Clear selection
+      setSelectedShifts([]);
       setSelectedDate(null);
+      getAllAssignment();
     } catch (error) {
       console.error("Submit error:", error);
       setSubmitMessage({
@@ -206,6 +247,14 @@ const RegisterShiftPage = () => {
   const isShiftSelected = (shiftId) => {
     return selectedShifts.some(
       (s) => s.shiftId === shiftId && s.date === formatDate(selectedDate)
+    );
+  };
+
+  const isShiftRegistered = (shiftId) => {
+    return registeredShifts.some(
+      (s) =>
+        s.shiftId === shiftId &&
+        s.workDate.split("T")[0] === formatDate(selectedDate)
     );
   };
 
@@ -311,13 +360,14 @@ const RegisterShiftPage = () => {
                       day.toDateString() === new Date().toDateString();
                     const isSelected =
                       selectedDate?.toDateString() === day.toDateString();
+                    const registeredCount = getRegisteredShiftCount(day);
 
                     return (
                       <button
                         key={index}
                         onClick={() => setSelectedDate(day)}
                         className={`
-                          relative p-3 rounded-lg text-sm font-medium transition-all duration-300 h-20
+                          relative p-3 rounded-lg text-sm font-medium transition-all duration-300 h-20 flex flex-col items-center justify-start
                           ${
                             isSelected
                               ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg scale-105"
@@ -327,10 +377,23 @@ const RegisterShiftPage = () => {
                           }
                         `}
                       >
-                        <span className="font-semibold">{day.getDate()}</span>
-                        {isSelected && (
-                          <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500/20 rounded-full flex items-center justify-center border-2 border-green-500/50">
-                            <CheckCircle className="w-3 h-3 text-green-600" />
+                        <span className="font-semibold text-lg">
+                          {day.getDate()}
+                        </span>
+
+                        {registeredCount > 0 && (
+                          <div
+                            className={`
+                              absolute top-1 right-1 min-w-5 h-5 flex items-center justify-center
+                              text-xs font-bold rounded-full shadow-md z-10
+                              ${
+                                isSelected
+                                  ? "bg-white text-blue-600"
+                                  : "bg-emerald-500 text-white"
+                              }
+                            `}
+                          >
+                            {registeredCount}
                           </div>
                         )}
                       </button>
@@ -343,7 +406,7 @@ const RegisterShiftPage = () => {
 
           {/* SHIFT SELECTION */}
           <div>
-            <div className="bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 overflow-hidden sticky top-6">
+            <div className="bg-white/70 backdrop-blur-lg rounded-xl shadow-sm border border-white/20 top-6">
               <div className="p-6 border-b bg-gradient-to-r from-blue-50/60 to-indigo-50/60">
                 <h3 className="font-semibold text-slate-700 flex items-center gap-2">
                   <Clock className="w-5 h-5 text-blue-600" />
@@ -355,8 +418,7 @@ const RegisterShiftPage = () => {
                   </p>
                 ) : isFutureDate(selectedDate) ? (
                   <p className="text-sm text-slate-500 mt-2">
-                    Select your shifts for{" "}
-                    {new Date(selectedDate).toLocaleDateString()}
+                    Select your shifts for {formatDate(new Date(selectedDate))}
                   </p>
                 ) : (
                   <p className="text-sm text-red-500 font-medium mt-2 flex items-center gap-2">
@@ -371,11 +433,13 @@ const RegisterShiftPage = () => {
                   <button
                     key={shift.id}
                     onClick={() => toggleShift(shift.id)}
-                    disabled={!selectedDate}
+                    disabled={!selectedDate || isShiftRegistered(shift.id)}
                     className={`
                       w-full p-4 rounded-xl font-medium text-sm transition-all duration-300 border-2 shadow-sm
                       ${
-                        isShiftSelected(shift.id)
+                        isShiftRegistered(shift.id)
+                          ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
+                          : isShiftSelected(shift.id)
                           ? `bg-gradient-to-r ${shift.color} text-white shadow-lg scale-105 border-transparent`
                           : `bg-white/60 text-slate-700 border-slate-200/60 hover:border-blue-300/60 hover:shadow-md hover:scale-102 ${
                               !selectedDate
@@ -452,9 +516,7 @@ const RegisterShiftPage = () => {
                         </div>
                       </div>
                       <div className="text-xs font-medium text-green-600 bg-green-100/60 px-2 py-1 rounded-full">
-                        {selectedDate
-                          ? new Date(selectedDate).toLocaleDateString()
-                          : ""}
+                        {shift.date}
                       </div>
                     </div>
                   ))}

@@ -1,0 +1,72 @@
+{
+  "Home": {
+    "section": {
+      "s1": "About Us",
+      "s2": "Cuisine",
+      "s3": "Post new",
+      "s4": "Discount"
+    },
+    "p1": {
+      "title": "BTM - A Bowl Full of Rice",
+      "p1.1": "A Vietnamese rice restaurant – a cozy family-style eatery in Hanoi.",
+      "p1.2": "At BTM, our philosophy is simple: to share the flavors and the art of enjoying authentic Vietnamese rice meals with everyone. We do this by using only the freshest ingredients, prepared by the skilled hands of our dedicated chefs.",
+      "p1.3": "The space at BTM Rice Restaurant is inspired by the traditional values of Vietnam, harmoniously blended with modern elements to create a nostalgic yet refreshing dining atmosphere.",
+      "p1.4": "With wood and greenery as the main design elements, nature surrounds you to create a truly distinctive dining experience!"
+    }
+  },
+  "About": {
+    "section": "ABOUT US",
+    "p1": {
+      "title": "BTM - A Bowl Full of Rice",
+      "p1.1": "A Vietnamese rice restaurant – a cozy family-style eatery in Hanoi.",
+      "p1.2": "At BTM, our philosophy is simple: to share the flavors and the art of enjoying authentic Vietnamese rice meals with everyone. We do this by using only the freshest ingredients, prepared by the skilled hands of our dedicated chefs.",
+      "p1.3": "The space at BTM Rice Restaurant is inspired by the traditional values of Vietnam, harmoniously blended with modern elements to create a nostalgic yet refreshing dining atmosphere.",
+      "p1.4": "With wood and greenery as the main design elements, nature surrounds you to create a truly distinctive dining experience!"
+    },
+    "p2": {
+      "p2.1": "Peaceful in space, Harmonious in flavor, and Powerful in emotion.",
+      "p2.2": "B stands for *Bình* — Peace, symbolizing balance and serenity in every moment of dining.",
+      "p2.3": "T stands for *Thái* — Harmony, evoking sophistication and the refined spirit of Asian culture where flavor and emotion intertwine in each dish.",
+      "p2.4": "M stands for *Mạnh* — Strength, representing vitality, energy, and the endless passion that BTM wishes to convey to every guest.",
+      "p2.5": "We aspire to bring diners a complete culinary experience, where flavor, atmosphere, and emotion come together to offer relaxation and a source of positive energy in every moment of enjoyment!"
+    }
+  },
+  "Cuisine": {
+    "title": {
+      "t1": "CARAMELIZED PORK BELLY",
+      "t2": "CRISPY GOBY FISH",
+      "t3": "BRAISED PORK WITH QUAIL EGGS",
+      "t4": "CRAB SOUP WITH MALABAR SPINACH"
+    },
+    "p": {
+      "p1": "Each slice of pork is cut to just the right size, seared over medium heat until the edges turn golden brown and slightly crispy — that’s when the caramelized pork belly reaches perfection.",
+      "p2": "Fried at just the right oil temperature, each marinated goby fish is cooked until it achieves a beautiful golden color and a perfectly crispy texture.",
+      "p3": "Selected pork belly is marinated in the authentic Northern flavor and braised with a rich caramel sauce, bringing back the comforting and nostalgic taste of home-cooked meals.",
+      "p4": "A bowl of hot crab soup, fragrant with crab roe, evokes the familiar countryside feeling — the taste of home."
+    }
+  },
+  "Booking": {
+    "title": "Reservation",
+    "form": {
+      "title": {
+        "t1": "RESERVATION TIME",
+        "t2": "CUSTOMER INFORMATION"
+      },
+      "name": {
+        "n1": "Number of guests",
+        "n2": "Reservation date",
+        "n3": "Arrival time"
+      },
+      "placeholder": {
+        "pl1": "Full name",
+        "pl2": "Phone number",
+        "pl3": "Note (optional)"
+      },
+      "button": "Booking now",
+      "p": {
+        "p1": "Please arrive 15 minutes before your reservation time so we can provide the best service.",
+        "p2": "Thank you!"
+      }
+    }
+  }
+}
